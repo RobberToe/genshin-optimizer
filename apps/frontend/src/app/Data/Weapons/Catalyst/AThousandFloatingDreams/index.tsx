@@ -62,7 +62,6 @@ const team_eleMasDisp = equal(
   subscript(input.weapon.refinement, team_eleMasArr),
   { ...KeyMap.info('eleMas'), isTeamBuff: true }
 )
-// Apply to non-equipped character
 const team_eleMas = unequal(input.charKey, target.charKey, team_eleMasDisp)
 
 export const data = dataObjForWeaponSheet(key, data_gen, {

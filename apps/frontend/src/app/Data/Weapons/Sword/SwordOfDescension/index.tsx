@@ -21,7 +21,6 @@ import { dataObjForWeaponSheet } from '../../util'
 const key: WeaponKey = 'SwordOfDescension'
 const data_gen = allStats.weapon.data[key]
 
-// Check equipped character is Traveler
 const atk = lookup(
   input.charKey,
   objKeyMap(allTravelerKeys, (_) => constant(66)),

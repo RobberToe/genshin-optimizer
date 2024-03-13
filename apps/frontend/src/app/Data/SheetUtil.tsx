@@ -86,12 +86,12 @@ function NameTrans({
 }
 
 export function activeCharBuff(
-  buffTargetKey: string | StrNode,
+  key: string | StrNode,
   node: NumNode,
   info: Info
 ) {
   return [
     infoMut(node, { ...info, isTeamBuff: true }),
-    equal(input.activeCharKey, buffTargetKey, node),
+    equal(input.activeCharKey, key, node),
   ]
 }
