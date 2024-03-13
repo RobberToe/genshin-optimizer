@@ -324,11 +324,12 @@ export default async function runExecutor(_options: GenLocaleExecutorSchema) {
   //generate the MapHashes for localization for materials
 
   Object.entries(materialExcelConfigData).forEach(([_id, material]) => {
-    const { nameTextMapHash } = material
+    const { nameTextMapHash, descTextMapHash } = material
     const key = nameToKey(TextMapEN[nameTextMapHash])
     if (!key || mapHashData.material[key]) return
     mapHashData.material[key] = {
       name: nameTextMapHash,
+      description: [descTextMapHash, 'paragraph'],
     }
   })
 
