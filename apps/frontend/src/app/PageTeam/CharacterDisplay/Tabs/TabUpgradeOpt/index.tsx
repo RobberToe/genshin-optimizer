@@ -33,7 +33,7 @@ import {
   allArtifactSlotKeys,
   charKeyToLocCharKey,
 } from '@genshin-optimizer/gi/consts'
-import { type ICachedArtifact } from '@genshin-optimizer/gi/db'
+import type { ICachedArtifact } from '@genshin-optimizer/gi/db'
 import {
   Suspense,
   useCallback,
@@ -79,8 +79,6 @@ export default function TabUpopt() {
   } = useContext(TeamCharacterContext)
   const database = useDatabase()
   const { gender } = useDBMeta()
-
-  const activeCharKey = database.teams.getActiveTeamChar(teamId).key
 
   const noArtifact = useMemo(() => !database.arts.values.length, [database])
 
@@ -212,7 +210,7 @@ export default function TabUpopt() {
     if (!characterKey || !optimizationTarget) return
     const teamData = getTeamData(database, teamId, teamCharId, 0, [])
     if (!teamData) return
-    const workerData = uiDataForTeam(teamData.teamData, gender, activeCharKey)[
+    const workerData = uiDataForTeam(teamData.teamData, gender, characterKey)[
       characterKey
     ]?.target.data![0]
     if (!workerData) return
@@ -333,16 +331,15 @@ export default function TabUpopt() {
     upoptCalc.calcSlowToIndex(5)
     setUpOptCalc(upoptCalc)
   }, [
+    teamCharId,
+    teamId,
     buildSetting,
     characterKey,
     database,
-    teamId,
-    teamCharId,
     gender,
-    activeCharKey,
-    check4th,
     show20,
     useFilters,
+    check4th,
   ])
 
   const dataContext: dataContextObj | undefined = useMemo(() => {

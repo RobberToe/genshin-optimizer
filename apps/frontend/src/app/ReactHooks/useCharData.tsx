@@ -104,7 +104,7 @@ const getCache = (database: ArtCharDatabase) => {
   return cache
 }
 
-function getTeamDataCalc(
+export function getTeamDataCalc(
   database: ArtCharDatabase,
   characterKey: CharacterKey | '',
   mainStatAssumptionLevel = 0,
