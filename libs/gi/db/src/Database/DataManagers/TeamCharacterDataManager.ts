@@ -115,10 +115,10 @@ export class TeamCharacterDataManager extends DataManager<
       num <= existingUndercKey.length * 2;
       num++
     ) {
-      const name = `${characterKey} Loadout ${num}`
+      const name = `Loadout Name ${num}`
       if (existingUndercKey.some((tc) => tc.name !== name)) return name
     }
-    return `${characterKey} Loadout`
+    return `Loadout Name`
   }
   override validate(obj: unknown): TeamCharacter | undefined {
     const { key: characterKey } = obj as TeamCharacter
