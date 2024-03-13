@@ -1,23 +1,19 @@
 import { clamp } from '@genshin-optimizer/common/util'
-import { Card, Slider, Button, Box, Divider } from '@mui/material'
+import { Card, Slider } from '@mui/material'
 import { useCallback, useEffect, useState } from 'react'
 import CustomNumberInput from '../CustomNumberInput'
 
 export default function RVSlide({
-  rvLow,
-  rvHigh,
-  useMaxRV,
-  switchFilter,
+  levelLow,
+  levelHigh,
   setLow,
   setHigh,
   setBoth,
   dark = false,
   disabled = false,
 }: {
-  rvLow: number
-  rvHigh: number
-  useMaxRV: boolean
-  switchFilter: (useMax: boolean) => void
+  levelLow: number
+  levelHigh: number
   setLow: (low: number) => void
   setHigh: (high: number) => void
   setBoth: (low: number, high: number) => void
@@ -25,9 +21,8 @@ export default function RVSlide({
   disabled?: boolean
   showLevelText?: boolean
 }) {
-  const [MRV_RV, setMRV_RV] = useState(useMaxRV) // Switch between MaxRV/RV
-  const [sliderLow, setsliderLow] = useState(rvLow)
-  const [sliderHigh, setsliderHigh] = useState(rvHigh)
+  const [sliderLow, setsliderLow] = useState(levelLow)
+  const [sliderHigh, setsliderHigh] = useState(levelHigh)
   const setSlider = useCallback(
     (e: unknown, value: number | number[]) => {
       if (typeof value == 'number') throw new TypeError()
@@ -37,11 +32,9 @@ export default function RVSlide({
     },
     [setsliderLow, setsliderHigh]
   )
-  useEffect(() => setsliderLow(rvLow), [setsliderLow, rvLow])
+  useEffect(() => setsliderLow(levelLow), [setsliderLow, levelLow])
 
-  useEffect(() => setsliderHigh(rvHigh), [setsliderHigh, rvHigh])
-
-  useEffect(() => setMRV_RV(useMaxRV), [setMRV_RV, useMaxRV])
+  useEffect(() => setsliderHigh(levelHigh), [setsliderHigh, levelHigh])
   return (
     <Card
       sx={{
@@ -52,41 +45,17 @@ export default function RVSlide({
         overflow: 'visible',
       }}
     >
-      <Box sx={{ width: 100, height: 32, display: 'flex' }}>
-        <Button
-          onClick={() => switchFilter(!useMaxRV)}
-          sx={{
-            p: 0,
-            minWidth: 0,
-            width: '55%',
-            borderRadius: '4px 0 0 4px',
-            fontWeight: 400,
-            fontSize: '16px',
-            display: 'inline',
-            textAlign: 'center',
-            color: 'rgba(255,255,255,0.9)',
-          }}
-        >
-          {MRV_RV ? 'MRV' : 'RV'}
-        </Button>
-
-        <Divider orientation="vertical" flexItem />
-
-        <CustomNumberInput
-          value={sliderLow}
-          onChange={(val) => setLow(clamp(val ?? 0, 0, sliderHigh))}
-          sx={{
-            pr: 1,
-            width: '45%',
-          }}
-          inputProps={{ sx: { textAlign: 'right' } }}
-          disabled={disabled}
-        />
-      </Box>
-
+      <CustomNumberInput
+        value={sliderLow}
+        onChange={(val) => setLow(clamp(val ?? 0, 0, levelHigh))}
+        sx={{ px: 1, pl: 2, width: 100, borderRadius: '4px 0 0 4px' }}
+        inputProps={{ sx: { textAlign: 'right' } }}
+        startAdornment={'RV: '}
+        disabled={disabled}
+      />
       <Slider
         sx={{ width: 100, flexGrow: 1, mx: 2 }}
-        getAriaLabel={() => `Arifact ${MRV_RV ? 'Max RV' : 'RV'} Range`}
+        getAriaLabel={() => 'Arifact RV Range'}
         value={[sliderLow, sliderHigh]}
         onChange={setSlider}
         onChangeCommitted={(e, value) => setBoth(value[0], value[1])}
@@ -97,7 +66,7 @@ export default function RVSlide({
       />
       <CustomNumberInput
         value={sliderHigh}
-        onChange={(val) => setHigh(clamp(val ?? 0, sliderLow, 900))}
+        onChange={(val) => setHigh(clamp(val ?? 0, levelLow, 900))}
         sx={{ px: 1, width: 50, borderRadius: '0 4px 4px 0' }}
         inputProps={{ sx: { textAlign: 'center' } }}
         disabled={disabled}

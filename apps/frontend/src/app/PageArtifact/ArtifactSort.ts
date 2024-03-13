@@ -39,7 +39,6 @@ export type FilterOption = {
   locked: Array<'locked' | 'unlocked'>
   rvLow: number
   rvHigh: number
-  useMaxRV: boolean
   lines: Array<1 | 2 | 3 | 4>
 }
 
@@ -58,7 +57,6 @@ export function initialFilterOption(): FilterOption {
     locked: ['locked', 'unlocked'],
     rvLow: 0,
     rvHigh: 900,
-    useMaxRV: false,
     lines: [1, 2, 3, 4],
   }
 }
@@ -106,23 +104,16 @@ export function artifactFilterConfigs(
     levelLow: (art, filter) => filter <= art.level,
     levelHigh: (art, filter) => filter >= art.level,
     // When RV is set to 0/900, allow all, just incase someone is doing some teehee haha with negative substats or stupid rolls
-    rvLow: (art, filter, filters) => {
-      if (filter === 0) return true
-      const { useMaxRV } = filters
-      const { currentEfficiency, maxEfficiency } =
-        Artifact.getArtifactEfficiency(art, effFilterSet)
-      const efficiencyToCompare = useMaxRV ? maxEfficiency : currentEfficiency
-      return filter <= efficiencyToCompare
-    },
-    rvHigh: (art, filter, filters) => {
-      if (filter === 900) return true
-      const { useMaxRV } = filters
-      const { currentEfficiency, maxEfficiency } =
-        Artifact.getArtifactEfficiency(art, effFilterSet)
-      const efficiencyToCompare = useMaxRV ? maxEfficiency : currentEfficiency
-      return filter >= efficiencyToCompare
-    },
-    useMaxRV: () => true,
+    rvLow: (art, filter) =>
+      filter === 0
+        ? true
+        : filter <=
+          Artifact.getArtifactEfficiency(art, effFilterSet).currentEfficiency,
+    rvHigh: (art, filter) =>
+      filter === 900
+        ? true
+        : filter >=
+          Artifact.getArtifactEfficiency(art, effFilterSet).currentEfficiency,
     rarity: (art, filter) => filter.includes(art.rarity),
     substats: (art, filter) => {
       for (const filterKey of filter)

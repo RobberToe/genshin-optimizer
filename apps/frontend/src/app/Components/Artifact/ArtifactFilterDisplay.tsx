@@ -69,7 +69,6 @@ export default function ArtifactFilterDisplay({
     locked = [...lockedValues],
     rvLow = 0,
     rvHigh = 900,
-    useMaxRV = false,
     lines = [],
   } = filterOption
 
@@ -250,10 +249,8 @@ export default function ArtifactFilterDisplay({
 
         <RVSlide
           showLevelText
-          rvLow={rvLow}
-          rvHigh={rvHigh}
-          useMaxRV={useMaxRV}
-          switchFilter={(useMaxRV) => filterOptionDispatch({ useMaxRV })}
+          levelLow={rvLow}
+          levelHigh={rvHigh}
           setLow={(rvLow) => filterOptionDispatch({ rvLow })}
           setHigh={(rvHigh) => filterOptionDispatch({ rvHigh })}
           setBoth={(rvLow, rvHigh) => filterOptionDispatch({ rvLow, rvHigh })}
