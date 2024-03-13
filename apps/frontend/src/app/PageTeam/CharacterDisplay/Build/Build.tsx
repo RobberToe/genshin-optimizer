@@ -131,15 +131,6 @@ export function Build({
     )
     return tcId && database.teamChars.get(tcId)!.key
   })
-  const canActivate = !active && !!weaponId
-  const titleElement = (
-    <Box sx={{ p: 1, display: 'flex', gap: 1, alignItems: 'center' }}>
-      <Typography variant="h6">{name}</Typography>
-      <BootstrapTooltip title={<Typography>{description}</Typography>}>
-        <InfoIcon />
-      </BootstrapTooltip>
-    </Box>
-  )
   return (
     <>
       <ModalWrapper open={open} onClose={onClose}>
@@ -152,32 +143,23 @@ export function Build({
           boxShadow: active ? '0px 0px 0px 2px green inset' : undefined,
         }}
       >
-        <CardContent
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 1,
-            alignItems: 'stretch',
-          }}
-        >
+        <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            {canActivate ? (
-              <Button
-                onClick={onActive}
-                color="info"
-                sx={{
-                  flexGrow: 1,
-                  p: 0,
-                  textAlign: 'left',
-                  justifyContent: 'flex-start',
-                }}
-              >
-                {titleElement}
-              </Button>
-            ) : (
-              <CardThemed sx={{ flexGrow: 1 }}>{titleElement}</CardThemed>
-            )}
-
+            <CardThemed sx={{ flexGrow: 1 }}>
+              <CardActionArea disabled={!weaponId || active} onClick={onActive}>
+                <Box
+                  component="span"
+                  sx={{ p: 1, display: 'flex', gap: 1, alignItems: 'center' }}
+                >
+                  <Typography variant="h6">{name}</Typography>
+                  <BootstrapTooltip
+                    title={<Typography>{description}</Typography>}
+                  >
+                    <InfoIcon />
+                  </BootstrapTooltip>
+                </Box>
+              </CardActionArea>
+            </CardThemed>
             <Tooltip
               title={<Typography>Edit Build Settings</Typography>}
               placement="top"
