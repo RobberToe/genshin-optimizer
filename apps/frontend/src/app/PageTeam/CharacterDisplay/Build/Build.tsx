@@ -113,7 +113,6 @@ export function Build({
     })
   const weaponUsedInTeamCharId = teamCharIds.find(
     (tcId) =>
-      tcId &&
       tcId !== teamCharId &&
       database.teamChars.getLoadoutWeapon(tcId).id === weaponId
   )
@@ -126,7 +125,6 @@ export function Build({
     if (!artId) return undefined
     const tcId = teamCharIds.find(
       (tcId) =>
-        tcId &&
         tcId !== teamCharId &&
         database.teamChars.getLoadoutArtifacts(tcId)[slotKey]?.id === artId
     )

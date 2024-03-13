@@ -39,17 +39,12 @@ export default function useOldData(): undefined | UIData {
   useEffect(() => {
     if (!dbDirty) return () => {}
     const unfollowTeamChars = teamCharIds.map((tcId) => {
-      const unfollowTeamChar = tcId
-        ? database.teamChars.follow(tcId, setDbDirty)
-        : () => {}
-      const unfollowChar = tcId
-        ? database.teamChars.followChar(tcId, setDbDirty)
-        : () => {}
-      const unfollowBuild = tcId
-        ? tcId === teamCharId
+      const unfollowTeamChar = database.teamChars.follow(tcId, setDbDirty)
+      const unfollowChar = database.teamChars.followChar(tcId, setDbDirty)
+      const unfollowBuild =
+        tcId === teamCharId
           ? database.teamChars.followCompareBuild(tcId, setDbDirty)
           : database.teamChars.followBuild(tcId, setDbDirty)
-        : () => {}
       return () => {
         unfollowTeamChar()
         unfollowChar()
