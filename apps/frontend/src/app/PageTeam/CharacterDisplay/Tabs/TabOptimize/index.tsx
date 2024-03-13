@@ -10,7 +10,7 @@ import {
   allArtifactSlotKeys,
   charKeyToLocCharKey,
 } from '@genshin-optimizer/gi/consts'
-import type { GeneratedBuild, ICachedArtifact } from '@genshin-optimizer/gi/db'
+import type { ICachedArtifact } from '@genshin-optimizer/gi/db'
 import { defThreads, maxBuildsToShowList } from '@genshin-optimizer/gi/db'
 import {
   useDBMeta,
@@ -84,6 +84,7 @@ import useGlobalError from '../../../../ReactHooks/useGlobalError'
 import useTeamData, { getTeamData } from '../../../../ReactHooks/useTeamData'
 import type { OptProblemInput } from '../../../../Solver'
 import { GOSolver } from '../../../../Solver/GOSolver/GOSolver'
+import type { Build } from '../../../../Solver/common'
 import { mergeBuilds, mergePlot } from '../../../../Solver/common'
 import { bulkCatTotal } from '../../../../Util/totalUtils'
 import useOldData from '../../../useOldData'
@@ -404,31 +405,26 @@ export default function TabBuild() {
       solver.cancel() // Done using `solver`
 
       cancelToken.current = () => {}
-      const weaponId = database.teamChars.getLoadoutWeapon(teamCharId).id
+
       if (plotBaseNumNode) {
         const plotData = mergePlot(results.map((x) => x.plotData!))
-        const solverBuilds = Object.values(plotData)
+        let data = Object.values(plotData)
         if (targetNode.info?.unit === '%')
-          solverBuilds.forEach(
-            (dataEntry) => (dataEntry.value = dataEntry.value * 100)
-          )
+          data = data.map(({ value, plot, artifactIds }) => ({
+            value: value * 100,
+            plot,
+            artifactIds,
+          })) as Build[]
         if (plotBaseNumNode.info?.unit === '%')
-          solverBuilds.forEach(
-            (dataEntry) => (dataEntry.plot = (dataEntry.plot ?? 0) * 100)
-          )
+          data = data.map(({ value, plot, artifactIds }) => ({
+            value,
+            plot: (plot ?? 0) * 100,
+            artifactIds,
+          })) as Build[]
         setChartData({
           valueNode: targetNode,
           plotNode: plotBaseNumNode,
-          data: solverBuilds.map(({ value, plot, artifactIds }) => ({
-            artifactIds: objKeyMap(allArtifactSlotKeys, (slotKey) =>
-              artifactIds.find(
-                (aId) => database.arts.get(aId)?.slotKey === slotKey
-              )
-            ),
-            weaponId,
-            value,
-            plot,
-          })),
+          data,
         })
       }
       const builds = mergeBuilds(
@@ -439,14 +435,7 @@ export default function TabBuild() {
         console.log('Build Result', builds)
 
       database.optConfigs.set(optConfigId, {
-        builds: builds.map((build) => ({
-          artifactIds: objKeyMap(allArtifactSlotKeys, (slotKey) =>
-            build.artifactIds.find(
-              (aId) => database.arts.get(aId).slotKey === slotKey
-            )
-          ),
-          weaponId,
-        })),
+        builds: builds.map((build) => build.artifactIds),
         buildDate: Date.now(),
       })
 
@@ -878,8 +867,8 @@ function BuildList({
   getLabel,
   mainStatAssumptionLevel,
 }: {
-  builds: GeneratedBuild[]
-  setBuilds?: (builds: GeneratedBuild[] | undefined) => void
+  builds: string[][]
+  setBuilds?: (builds: string[][] | undefined) => void
   oldData?: UIData
   disabled: boolean
   getLabel: (index: number) => Displayable
@@ -911,7 +900,7 @@ function BuildList({
         >
           {builds?.map((build, index) => (
             <DataContextWrapper
-              key={index + Object.values(build.artifactIds).join()}
+              key={index + build.join()}
               characterKey={characterKey}
               build={build}
               oldData={oldData}
@@ -951,7 +940,7 @@ function BuildItemWrapper({
 }: {
   index: number
   label: Displayable
-  build: GeneratedBuild
+  build: string[]
   disabled: boolean
   deleteBuild?: (index: number) => void
 }) {
@@ -980,7 +969,7 @@ function BuildItemWrapper({
     />
   )
 }
-function CopyTcButton({ build }: { build: GeneratedBuild }) {
+function CopyTcButton({ build }: { build: string[] }) {
   const [name, setName] = useState('')
   const [showTcPrompt, onShowTcPrompt, OnHideTcPrompt] = useBoolState()
 
@@ -997,7 +986,7 @@ function CopyTcButton({ build }: { build: GeneratedBuild }) {
       teamCharId,
       weaponTypeKey,
       weapon,
-      Object.values(build.artifactIds).map((id) => database.arts.get(id))
+      build.map((id) => database.arts.get(id))
     )
     database.buildTcs.set(buildTcId, {
       name,
@@ -1049,11 +1038,7 @@ function CopyTcButton({ build }: { build: GeneratedBuild }) {
     </>
   )
 }
-function CopyBuildButton({
-  build: { artifactIds, weaponId },
-}: {
-  build: GeneratedBuild
-}) {
+function CopyBuildButton({ build }: { build: string[] }) {
   const [name, setName] = useState('')
   const [showTcPrompt, onShowTcPrompt, OnHideTcPrompt] = useBoolState()
 
@@ -1061,10 +1046,16 @@ function CopyBuildButton({
   const { teamCharId } = useContext(TeamCharacterContext)
 
   const toLoadout = () => {
+    const weapon = database.teamChars.getLoadoutWeapon(teamCharId)
+    const artifactIds = objKeyMap(allArtifactSlotKeys, () => undefined)
+    build.forEach((id) => {
+      const art = database.arts.get(id)
+      artifactIds[art.slotKey] = id
+    })
     database.teamChars.newBuild(teamCharId, {
       name,
+      weaponId: weapon.id,
       artifactIds,
-      weaponId,
     })
 
     setName('')
@@ -1117,7 +1108,7 @@ function CopyBuildButton({
 type Prop = {
   children: React.ReactNode
   characterKey: CharacterKey
-  build: GeneratedBuild
+  build: string[]
   oldData: UIData
   mainStatAssumptionLevel: number
 }
@@ -1128,35 +1119,22 @@ function DataContextWrapper({
   oldData,
   mainStatAssumptionLevel,
 }: Prop) {
-  const { artifactIds, weaponId } = build
   const database = useDatabase()
-  // Update the build when the build artifacts/weapons are changed.
+  // Update the build when the build artifacts are changed.
   const [dirty, setDirty] = useForceUpdate()
-  useEffect(() => {
-    const unfollowArts = Object.values(artifactIds).map((id) =>
-      database.arts.follow(id, () => setDirty())
-    )
-    return () => {
-      unfollowArts.forEach((unfollow) => unfollow())
-    }
-  }, [database, artifactIds, setDirty])
   useEffect(
-    () => database.weapons.follow(weaponId, () => setDirty()),
-    [database, weaponId, setDirty]
+    () => database.arts.followAny((id) => build.includes(id) && setDirty()),
+    [database, build, setDirty]
   )
   const buildsArts = useMemo(
     () =>
       dirty &&
-      (Object.values(artifactIds)
+      (build
         .map((i) => database.arts.get(i))
         .filter((a) => a) as ICachedArtifact[]),
-    [dirty, artifactIds, database]
+    [dirty, build, database]
   )
-  const buildWeapon = useMemo(
-    () => dirty && database.weapons.get(weaponId),
-    [dirty, weaponId, database]
-  )
-  const teamData = useTeamData(mainStatAssumptionLevel, buildsArts, buildWeapon)
+  const teamData = useTeamData(mainStatAssumptionLevel, buildsArts)
   const providerValue = useMemo(() => {
     const tdc = teamData?.[characterKey]
     if (!tdc) return undefined

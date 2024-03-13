@@ -1,11 +1,7 @@
 import { CardThemed } from '@genshin-optimizer/common/ui'
 import type { CharacterKey } from '@genshin-optimizer/gi/consts'
 import { charKeyToLocGenderedCharKey } from '@genshin-optimizer/gi/consts'
-import type {
-  GeneratedBuild,
-  Team,
-  TeamCharacter,
-} from '@genshin-optimizer/gi/db'
+import type { Team, TeamCharacter } from '@genshin-optimizer/gi/db'
 import {
   useCharacter,
   useDBMeta,
@@ -182,7 +178,7 @@ function Page({ teamId, onClose }: { teamId: string; onClose?: () => void }) {
 }
 // Stored per teamCharId
 const chartDataAll: Record<string, ChartData> = {}
-const graphBuildAll: Record<string, GeneratedBuild[]> = {}
+const graphBuildAll: Record<string, string[][]> = {}
 function PageContent({
   characterKey,
   teamCharId,
@@ -225,9 +221,9 @@ function PageContent({
   const [chartData, setChartDataState] = useState<ChartData | undefined>(
     chartDataAll[teamCharId]
   )
-  const [graphBuilds, setGraphBuildState] = useState<
-    GeneratedBuild[] | undefined
-  >(graphBuildAll[teamCharId])
+  const [graphBuilds, setGraphBuildState] = useState<string[][] | undefined>(
+    graphBuildAll[teamCharId]
+  )
   useEffect(() => {
     setChartDataState(chartDataAll[teamCharId])
     setGraphBuildState(graphBuildAll[teamCharId])

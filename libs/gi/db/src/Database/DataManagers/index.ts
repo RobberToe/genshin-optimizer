@@ -12,7 +12,6 @@ import type {
   AllowLocationsState,
   ArtSetExclusion,
   ArtSetExclusionKey,
-  GeneratedBuild,
   StatFilterSetting,
   StatFilters,
 } from './OptConfigDataManager'
@@ -52,7 +51,6 @@ export type {
   AllowLocationsState,
   ArtSetExclusion,
   ArtSetExclusionKey,
-  GeneratedBuild,
   MinTotalStatKey,
   StatFilterSetting,
   StatFilters,

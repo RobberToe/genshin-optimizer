@@ -1,19 +1,17 @@
-import type { GeneratedBuild } from '@genshin-optimizer/gi/db'
-
 export default class EnhancedPoint {
   public x: number
   public trueY?: number
-  public build: GeneratedBuild
+  public artifactIds: string[]
   public min?: number
   public current?: number
   public highlighted?: number
   public generBuildNumber?: number
   public graphBuildNumber?: number
 
-  public constructor(x: number, y: number, build: GeneratedBuild) {
+  public constructor(x: number, y: number, artifactIds: string[]) {
     this.x = x
     this.trueY = y
-    this.build = build
+    this.artifactIds = artifactIds
   }
 
   public get y(): number {

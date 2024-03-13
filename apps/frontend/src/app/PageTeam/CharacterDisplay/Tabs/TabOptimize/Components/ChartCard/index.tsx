@@ -5,7 +5,6 @@ import {
   valueString,
 } from '@genshin-optimizer/common/util'
 import { allArtifactSlotKeys } from '@genshin-optimizer/gi/consts'
-import type { GeneratedBuild } from '@genshin-optimizer/gi/db'
 import { useOptConfig } from '@genshin-optimizer/gi/db-ui'
 import {
   CheckBox,
@@ -107,16 +106,16 @@ export default function ChartCard({
     )
     // Shape the data so we know the current and highlighted builds
     const points = chartData.data
-      .map(({ value: y, plot: x, artifactIds, weaponId }) => {
+      .map(({ value: y, plot: x, artifactIds }) => {
         if (x === undefined) return null
         if (x < sliderMin) sliderMin = x
         if (x > sliderMax) sliderMax = x
-        const artifactIdsArr = Object.values(artifactIds)
-        const enhancedDatum: EnhancedPoint = new EnhancedPoint(x, y, {
-          artifactIds,
-          weaponId,
-        })
-        const datumBuildMap = objKeyMap(artifactIdsArr, (_) => true)
+        const enhancedDatum: EnhancedPoint = new EnhancedPoint(
+          x,
+          y,
+          artifactIds
+        )
+        const datumBuildMap = objKeyMap(artifactIds, (_) => true)
 
         const isCurrentBuild = currentBuild.every((aId) => datumBuildMap[aId])
         if (isCurrentBuild) {
@@ -126,10 +125,8 @@ export default function ChartCard({
           // Don't return yet, still need to check if build is highlighted
         }
 
-        const graphBuildIndex = graphBuilds?.findIndex(
-          (build) =>
-            build.weaponId === weaponId &&
-            artifactIdsArr.every((aId) => datumBuildMap[aId])
+        const graphBuildIndex = graphBuilds?.findIndex((build) =>
+          build.every((aId) => datumBuildMap[aId])
         )
         if (graphBuildIndex !== undefined && graphBuildIndex !== -1) {
           // Skip setting y-value if it has already been set.
@@ -141,10 +138,8 @@ export default function ChartCard({
           enhancedDatum.graphBuildNumber = graphBuildIndex + 1
         }
 
-        const generBuildIndex = generatedBuilds.findIndex(
-          (build) =>
-            build.weaponId === weaponId &&
-            Object.values(build.artifactIds).every((aId) => datumBuildMap[aId])
+        const generBuildIndex = generatedBuilds.findIndex((build) =>
+          build.every((aId) => datumBuildMap[aId])
         )
         if (generBuildIndex !== -1) {
           // Skip setting y-value if it has already been set.
@@ -340,7 +335,7 @@ function Chart({
   const { t } = useTranslation('page_character_optimize')
   const [selectedPoint, setSelectedPoint] = useState<EnhancedPoint>()
   const addBuildToList = useCallback(
-    (build: GeneratedBuild) => {
+    (build: string[]) => {
       setGraphBuilds([...(graphBuilds ?? []), build])
       setSelectedPoint(undefined)
     },
