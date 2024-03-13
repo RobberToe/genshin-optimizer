@@ -131,16 +131,6 @@ function sweepDmg(specialMultiplier?: NumNode) {
   )
 }
 
-function turretDmg(specialMultiplier?: NumNode) {
-  return splitScaleDmgNode(
-    ['atk', 'def'],
-    [dm.skill.turretDmg_atk, dm.skill.turretDmg_def],
-    'skill',
-    undefined,
-    specialMultiplier
-  )
-}
-
 const dmgFormulas = {
   normal: {
     ...Object.fromEntries(
@@ -152,7 +142,11 @@ const dmgFormulas = {
   },
   plunging: plungingDmgNodes('atk', dm.plunging),
   skill: {
-    turretDmg: turretDmg(),
+    turretDmg: splitScaleDmgNode(
+      ['atk', 'def'],
+      [dm.skill.turretDmg_atk, dm.skill.turretDmg_def],
+      'skill'
+    ),
     sweepDmg: sweepDmg(),
   },
   burst: {
@@ -163,13 +157,13 @@ const dmgFormulas = {
     ),
   },
   passive1: {
-    dollDmg: greaterEq(input.asc, 1, sweepDmg(percent(dm.passive1.dollDmg))),
+    dollDmg: sweepDmg(percent(dm.passive1.dollDmg)),
   },
   constellation2: {
     dollDmg: greaterEq(
       input.constellation,
       2,
-      turretDmg(percent(dm.passive1.dollDmg * dm.constellation2.dmg))
+      sweepDmg(percent(dm.passive1.dollDmg * dm.constellation2.dmg))
     ),
   },
   constellation6: {
