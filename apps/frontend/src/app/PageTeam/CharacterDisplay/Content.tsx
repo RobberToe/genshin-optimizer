@@ -4,6 +4,7 @@ import type { CharacterKey } from '@genshin-optimizer/gi/consts'
 import BarChartIcon from '@mui/icons-material/BarChart'
 import CalculateIcon from '@mui/icons-material/Calculate'
 import FactCheckIcon from '@mui/icons-material/FactCheck'
+import GroupsIcon from '@mui/icons-material/Groups'
 import PersonIcon from '@mui/icons-material/Person'
 import ScienceIcon from '@mui/icons-material/Science'
 import TrendingUpIcon from '@mui/icons-material/TrendingUp'
@@ -30,6 +31,7 @@ import StatModal from './StatModal'
 import TabBuild from './Tabs/TabOptimize'
 import TabOverview from './Tabs/TabOverview'
 import TabTalent from './Tabs/TabTalent'
+import TabTeambuffs from './Tabs/TabTeambuffs'
 import TabTheorycraft from './Tabs/TabTheorycraft'
 import TabUpopt from './Tabs/TabUpgradeOpt'
 
@@ -97,6 +99,7 @@ function CharacterPanel() {
           <Route path="/:characterKey/*" element={<TabOverview />} />
         )}
         <Route path="/:characterKey/talent" element={<TabTalent />} />
+        <Route path="/:characterKey/teambuffs" element={<TabTeambuffs />} />
         {!isTCBuild && (
           <Route path="/:characterKey/optimize" element={<TabBuild />} />
         )}
@@ -155,6 +158,13 @@ function TabNav({
         icon={<FactCheckIcon />}
         component={RouterLink}
         to={`${characterKey}/talent`}
+      />
+      <Tab
+        value="teambuffs"
+        label={t('tabs.teambuffs')}
+        icon={<GroupsIcon />}
+        component={RouterLink}
+        to={`${characterKey}/teambuffs`}
       />
       {!isTCBuild && (
         <Tab

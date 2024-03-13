@@ -8,8 +8,7 @@ import { useDBMeta, useDatabase } from '@genshin-optimizer/gi/db-ui'
 import { CharacterName } from '@genshin-optimizer/gi/ui'
 import AddIcon from '@mui/icons-material/Add'
 import CloseIcon from '@mui/icons-material/Close'
-import GroupsIcon from '@mui/icons-material/Groups'
-import SettingsIcon from '@mui/icons-material/Settings'
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline'
 import {
   Alert,
   Box,
@@ -17,31 +16,19 @@ import {
   CardContent,
   CardHeader,
   Divider,
-  Grid,
   TextField,
   Typography,
 } from '@mui/material'
 import { Suspense, useDeferredValue, useEffect, useState } from 'react'
-import CharacterSelectionModal from '../../Components/Character/CharacterSelectionModal'
-import CloseButton from '../../Components/CloseButton'
-import CharIconSide from '../../Components/Image/CharIconSide'
-import type { dataContextObj } from '../../Context/DataContext'
-import { DataContext } from '../../Context/DataContext'
-import { LoadoutDropdown } from '../LoadoutDropdown'
-import {
-  ResonanceDisplay,
-  TeamBuffDisplay,
-  TeammateDisplay,
-} from './TeamComponents'
+import CharacterSelectionModal from '../Components/Character/CharacterSelectionModal'
+import CloseButton from '../Components/CloseButton'
+import CharIconSide from '../Components/Image/CharIconSide'
+import { LoadoutDropdown } from './LoadoutDropdown'
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward'
+import GroupsIcon from '@mui/icons-material/Groups'
 // TODO: Translation
 
-export default function TeamSetting({
-  teamId,
-  dataContextValue,
-}: {
-  teamId: string
-  dataContextValue?: dataContextObj
-}) {
+export default function TeamSettingElement({ teamId }: { teamId: string }) {
   const database = useDatabase()
   const team = database.teams.get(teamId)!
   const noChars = team.teamCharIds.every((id) => !id)
@@ -84,18 +71,14 @@ export default function TeamSetting({
           color="info"
           sx={{ flexGrow: 1 }}
           startIcon={<GroupsIcon />}
-          endIcon={<SettingsIcon />}
+          endIcon={<DriveFileRenameOutlineIcon />}
           onClick={() => setOpen((open) => !open)}
         >
           <Typography variant="h6">{team.name}</Typography>
         </Button>
       </BootstrapTooltip>
 
-      <ModalWrapper
-        open={open}
-        onClose={() => setOpen(false)}
-        containerProps={{ maxWidth: 'xl' }}
-      >
+      <ModalWrapper open={open} onClose={() => setOpen(false)}>
         <CardThemed>
           <CardHeader
             title={
@@ -137,23 +120,14 @@ export default function TeamSetting({
               The first character in the team receives any "active on-field
               character" buffs, and cannot be empty.
             </Alert>
-            <TeamCharacterSelector
-              teamId={teamId}
-              dataContextValue={dataContextValue}
-            />
+            <TeamCharacterSelector teamId={teamId} />
           </CardContent>
         </CardThemed>
       </ModalWrapper>
     </>
   )
 }
-function TeamCharacterSelector({
-  teamId,
-  dataContextValue,
-}: {
-  teamId: string
-  dataContextValue?: dataContextObj
-}) {
+function TeamCharacterSelector({ teamId }: { teamId: string }) {
   const database = useDatabase()
   const team = database.teams.get(teamId)!
   const { teamCharIds } = team
@@ -206,44 +180,28 @@ function TeamCharacterSelector({
           onSelect={onSelect}
         />
       </Suspense>
-      <Grid container columns={{ xs: 1, md: 3, lg: 5 }} spacing={2}>
-        <Grid
-          item
-          xs={1}
-          sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
-        >
-          {dataContextValue && (
-            <DataContext.Provider value={dataContextValue}>
-              <TeamBuffDisplay />
-              <ResonanceDisplay teamId={teamId} />
-            </DataContext.Provider>
-          )}
-        </Grid>
-        {teamCharIds.map((teamCharId, ind) => (
-          <Grid item xs={1} key={teamCharId ?? ind}>
-            {teamCharId ? (
-              <CharSelButton
-                index={ind}
-                key={teamCharId}
-                teamId={teamId}
-                teamCharId={teamCharId}
-                onClickChar={() => setCharSelectIndex(ind)}
-                dataContextValue={dataContextValue}
-              />
-            ) : (
-              <Button
-                key={ind}
-                onClick={() => setCharSelectIndex(ind)}
-                fullWidth
-                disabled={!!ind && !teamCharIds.some((id) => id)}
-                startIcon={<AddIcon />}
-              >
-                Add Character
-              </Button>
-            )}
-          </Grid>
-        ))}
-      </Grid>
+      {teamCharIds.map((teamCharId, ind) =>
+        teamCharId ? (
+          <CharSelButton
+            index={ind}
+            key={teamCharId}
+            teamId={teamId}
+            teamCharId={teamCharId}
+            onClickChar={() => setCharSelectIndex(ind)}
+          />
+        ) : (
+          <Button
+            key={ind}
+            onClick={() => setCharSelectIndex(ind)}
+            fullWidth
+            sx={{ height: '100%' }}
+            disabled={!!ind && !teamCharIds.some((id) => id)}
+            startIcon={<AddIcon />}
+          >
+            Add Character
+          </Button>
+        )
+      )}
     </>
   )
 }
@@ -251,13 +209,11 @@ function CharSelButton({
   index,
   teamId,
   teamCharId,
-  dataContextValue,
   onClickChar,
 }: {
   index: number
   teamId: string
   teamCharId: string
-  dataContextValue?: dataContextObj
   onClickChar: () => void
 }) {
   const database = useDatabase()
@@ -282,43 +238,35 @@ function CharSelButton({
       team.teamCharIds[index] = undefined
     })
   return (
-    // <CardThemed bgt="light" sx={{ height: '100%' }}>
-    //   <CardContent>
-    <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>
-      <Box sx={{ display: 'flex', gap: 1 }}>
-        <Button
-          onClick={onClickChar}
-          color={'success'}
-          sx={{ flexGrow: 1 }}
-          startIcon={<CharIconSide characterKey={characterKey} />}
-        >
-          <CharacterName characterKey={characterKey} gender={gender} />
-        </Button>
-        <Button onClick={onDel} color="error" sx={{ p: 1, minWidth: 0 }}>
-          <CloseIcon />
-        </Button>
-      </Box>
-      <LoadoutDropdown
-        teamCharId={teamCharId}
-        onChangeTeamCharId={onChangeTeamCharId}
-        dropdownBtnProps={{ sx: { flexGrow: 1 } }}
-      />
-      {index ? (
-        <Button onClick={onActive} color="info">
-          To Field
-        </Button>
-      ) : (
-        <Button disabled color="info">
-          On-field Character
-        </Button>
-      )}
-      {dataContextValue && (
-        <TeammateDisplay
-          dataContextValue={dataContextValue}
-          teamCharId={teamCharId}
-          teamId={teamId}
-        />
-      )}
-    </Box>
+    <CardThemed bgt="light">
+      <CardContent>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button
+            onClick={onClickChar}
+            color={'success'}
+            startIcon={<CharIconSide characterKey={characterKey} />}
+          >
+            <CharacterName characterKey={characterKey} gender={gender} />
+          </Button>
+          <LoadoutDropdown
+            teamCharId={teamCharId}
+            onChangeTeamCharId={onChangeTeamCharId}
+            dropdownBtnProps={{ sx: { flexGrow: 1 } }}
+          />
+          {!!index && (
+            <Button
+              onClick={onActive}
+              startIcon={<ArrowUpwardIcon />}
+              color="info"
+            >
+              Active
+            </Button>
+          )}
+          <Button onClick={onDel} color="error" sx={{ flexBasis: '0' }}>
+            <CloseIcon />
+          </Button>
+        </Box>
+      </CardContent>
+    </CardThemed>
   )
 }
