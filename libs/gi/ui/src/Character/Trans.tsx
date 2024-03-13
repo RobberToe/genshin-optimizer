@@ -5,7 +5,6 @@ import {
   type LocationGenderedCharacterKey,
 } from '@genshin-optimizer/gi/consts'
 import { useContext } from 'react'
-import { useTranslation } from 'react-i18next'
 import { SillyContext } from '../Context'
 import { Translate } from '../Translate'
 
@@ -19,14 +18,9 @@ export function CharacterName({
   const { silly } = useContext(SillyContext)
   const cKey = charKeyToLocGenderedCharKey(characterKey, gender)
 
-  const { i18n } = useTranslation('sillyWisher_charNames')
   return (
     <Translate
-      ns={
-        silly && i18n.exists(`sillyWisher_charNames:${cKey}`)
-          ? 'sillyWisher_charNames'
-          : 'charNames_gen'
-      }
+      ns={silly ? 'sillyWisher_charNames' : 'charNames_gen'}
       key18={cKey}
     />
   )
