@@ -9,7 +9,7 @@ import {
   ModalWrapper,
   useOnScreen,
 } from '@genshin-optimizer/common/ui'
-import { filterFunction, sortFunction } from '@genshin-optimizer/common/util'
+import { sortFunction } from '@genshin-optimizer/common/util'
 import { teamSortKeys } from '@genshin-optimizer/gi/db'
 import { useDatabase } from '@genshin-optimizer/gi/db-ui'
 import AddIcon from '@mui/icons-material/Add'
@@ -25,17 +25,14 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import type { ChangeEvent } from 'react'
-import { Suspense, useDeferredValue, useEffect, useMemo, useState } from 'react'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { CharacterMultiAutocomplete } from '../Components/Character/CharacterMultiAutocomplete'
 import ShowingAndSortOptionSelect from '../Components/ShowingAndSortOptionSelect'
 import TeamCard from './TeamCard'
-import { teamFilterConfigs, teamSortConfigs, teamSortMap } from './TeamSort'
-
+import { teamSortConfigs, teamSortMap } from './TeamSort'
 const columns = { xs: 1, sm: 2, md: 3, lg: 4, xl: 4 }
-const numToShowMap = { xs: 6, sm: 12, md: 18, lg: 24, xl: 24 }
+const numToShowMap = { xs: 5, sm: 8, md: 9, lg: 12, xl: 12 }
 
 // TODO: Translation
 
@@ -74,34 +71,20 @@ export default function PageTeams() {
       return
     }
   }
-  const displayTeam = useDataEntryBase(database.displayTeam)
-  const { sortType, ascending, charKeys } = displayTeam
-
-  const [searchTerm, setSearchTerm] = useState(displayTeam.searchTerm)
-  const deferredSearchTerm = useDeferredValue(searchTerm)
-  useEffect(() => {
-    database.displayTeam.set({ searchTerm: deferredSearchTerm })
-  }, [database, deferredSearchTerm])
+  const { sortType, ascending } = useDataEntryBase(database.displayTeam)
 
   // Currently using the BD key as an ID maybe later will need to add an ID entry to Team
   const { teamIds, totalTeamNum } = useMemo(() => {
     const totalTeamNum = database.teams.keys.length
-    const teamIds = database.teams.keys
-      .filter(
-        filterFunction(
-          { charKeys, name: deferredSearchTerm },
-          teamFilterConfigs(database)
-        )
-      )
-      .sort((k1, k2) => {
-        return sortFunction(
-          teamSortMap[sortType],
-          ascending,
-          teamSortConfigs()
-        )(database.teams.get(k1)!, database.teams.get(k2)!)
-      })
+    const teamIds = database.teams.keys.sort((k1, k2) => {
+      return sortFunction(
+        teamSortMap[sortType],
+        ascending,
+        teamSortConfigs()
+      )(database.teams.get(k1)!, database.teams.get(k2)!)
+    })
     return dbDirty && { teamIds, totalTeamNum }
-  }, [dbDirty, database, charKeys, deferredSearchTerm, sortType, ascending])
+  }, [dbDirty, database.teams, sortType, ascending])
   const brPt = useMediaQueryUp()
   const [numShow, setNumShow] = useState(numToShowMap[brPt])
   // reset the numShow when artifactIds changes
@@ -133,7 +116,7 @@ export default function PageTeams() {
     numShowing: TeamIdsToShow.length,
     total: totalShowing,
     t: t,
-    namespace: 'page_teams',
+    namespace: 'page_character',
   }
 
   const sortByButtonProps = {
@@ -147,28 +130,7 @@ export default function PageTeams() {
   return (
     <Box my={1} display="flex" flexDirection="column" gap={1}>
       <CardThemed>
-        <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <Box display="flex" gap={1} alignItems="stretch">
-            <CharacterMultiAutocomplete
-              teamIds={teamIds}
-              charKeys={charKeys}
-              setCharKey={(charKeys) => database.displayTeam.set({ charKeys })}
-              acProps={{ sx: { flexGrow: 1 } }}
-            />
-            <TextField
-              autoFocus
-              value={searchTerm}
-              onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-                setSearchTerm(e.target.value)
-              }
-              label="Team Name"
-              // size="small"
-              sx={{ height: '100%', flexGrow: 1 }}
-              InputProps={{
-                sx: { height: '100%' },
-              }}
-            />
-          </Box>
+        <CardContent>
           <Box
             display="flex"
             justifyContent="space-between"
