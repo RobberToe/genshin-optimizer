@@ -162,10 +162,6 @@ export class TeamCharacterDataManager extends DataManager<
 
     if (!conditional) conditional = {}
 
-    // Resonance conditionals have been moved to teams
-    if ((conditional as any)['resonance'])
-      delete (conditional as any)['resonance']
-
     // TODO: validate bonusStats
     if (
       typeof bonusStats !== 'object' ||

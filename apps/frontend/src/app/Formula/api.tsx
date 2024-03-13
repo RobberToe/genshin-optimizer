@@ -136,7 +136,7 @@ function dataObjForCharacter(char: ICachedCharacter): Data {
 export interface CharInfo extends ICharacter {
   infusionAura: TeamCharacter['infusionAura']
   customMultiTargets: TeamCharacter['customMultiTargets']
-  conditional: TeamCharacter['conditional'] & Team['conditional']
+  conditional: TeamCharacter['conditional']
   bonusStats: TeamCharacter['bonusStats']
   enemyOverride: Team['enemyOverride']
   hitMode: TeamCharacter['hitMode']

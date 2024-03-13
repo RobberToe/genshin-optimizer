@@ -63,34 +63,22 @@ function SimpleConditionalSelector({
   conditional,
   disabled,
 }: SimpleConditionalSelectorProps) {
-  const { teamId, teamCharId } = useContext(TeamCharacterContext)
+  const { teamCharId } = useContext(TeamCharacterContext)
   const { data } = useContext(DataContext)
   const database = useDatabase()
-
   const setConditional = useCallback(
     (v?: string) => {
-      if (conditional.path[0] === 'resonance')
-        database.teams.set(teamId, (team) => {
-          const conditionalValues = deepClone(team.conditional)
-          if (v) {
-            layeredAssignment(conditionalValues, conditional.path, v)
-          } else {
-            deletePropPath(conditionalValues, conditional.path)
-          }
-          team.conditional = conditionalValues
-        })
-      else
-        database.teamChars.set(teamCharId, (teamChar) => {
-          const conditionalValues = deepClone(teamChar.conditional)
-          if (v) {
-            layeredAssignment(conditionalValues, conditional.path, v)
-          } else {
-            deletePropPath(conditionalValues, conditional.path)
-          }
-          teamChar.conditional = conditionalValues
-        })
+      database.teamChars.set(teamCharId, (teamChar) => {
+        const conditionalValues = deepClone(teamChar.conditional)
+        if (v) {
+          layeredAssignment(conditionalValues, conditional.path, v)
+        } else {
+          deletePropPath(conditionalValues, conditional.path)
+        }
+        teamChar.conditional = conditionalValues
+      })
     },
-    [database, conditional.path, teamCharId, teamId]
+    [database, conditional.path, teamCharId]
   )
 
   const conditionalValue = data.get(conditional.value).value
@@ -120,33 +108,22 @@ function ExclusiveConditionalSelector({
   conditional,
   disabled,
 }: ExclusiveConditionalSelectorProps) {
-  const { teamId, teamCharId } = useContext(TeamCharacterContext)
+  const { teamCharId } = useContext(TeamCharacterContext)
   const { data } = useContext(DataContext)
   const database = useDatabase()
   const setConditional = useCallback(
     (v?: string) => {
-      if (conditional.path[0] === 'resonance')
-        database.teams.set(teamId, (team) => {
-          const conditionalValues = deepClone(team.conditional)
-          if (v) {
-            layeredAssignment(conditionalValues, conditional.path, v)
-          } else {
-            deletePropPath(conditionalValues, conditional.path)
-          }
-          team.conditional = conditionalValues
-        })
-      else
-        database.teamChars.set(teamCharId, (teamChar) => {
-          const conditionalValues = deepClone(teamChar.conditional)
-          if (v) {
-            layeredAssignment(conditionalValues, conditional.path, v)
-          } else {
-            deletePropPath(conditionalValues, conditional.path)
-          }
-          teamChar.conditional = conditionalValues
-        })
+      database.teamChars.set(teamCharId, (teamChar) => {
+        const conditionalValues = deepClone(teamChar.conditional)
+        if (v) {
+          layeredAssignment(conditionalValues, conditional.path, v)
+        } else {
+          deletePropPath(conditionalValues, conditional.path)
+        }
+        teamChar.conditional = conditionalValues
+      })
     },
-    [database, conditional.path, teamCharId, teamId]
+    [database, conditional.path, teamCharId]
   )
 
   const conditionalValue = data.get(conditional.value).value
@@ -201,33 +178,22 @@ function MultipleConditionalSelector({
   conditional,
   disabled,
 }: MultipleConditionalSelectorProps) {
-  const { teamId, teamCharId } = useContext(TeamCharacterContext)
+  const { teamCharId } = useContext(TeamCharacterContext)
   const { data } = useContext(DataContext)
   const database = useDatabase()
   const setConditional = useCallback(
     (path: readonly string[], v?: string) => {
-      if (path[0] === 'resonance')
-        database.teamChars.set(teamId, (team) => {
-          const conditionalValues = deepClone(team.conditional)
-          if (v) {
-            layeredAssignment(conditionalValues, path, v)
-          } else {
-            deletePropPath(conditionalValues, path)
-          }
-          team.conditional = conditionalValues
-        })
-      else
-        database.teamChars.set(teamCharId, (teamChar) => {
-          const conditionalValues = deepClone(teamChar.conditional)
-          if (v) {
-            layeredAssignment(conditionalValues, path, v)
-          } else {
-            deletePropPath(conditionalValues, path)
-          }
-          teamChar.conditional = conditionalValues
-        })
+      database.teamChars.set(teamCharId, (teamChar) => {
+        const conditionalValues = deepClone(teamChar.conditional)
+        if (v) {
+          layeredAssignment(conditionalValues, path, v)
+        } else {
+          deletePropPath(conditionalValues, path)
+        }
+        teamChar.conditional = conditionalValues
+      })
     },
-    [database, teamCharId, teamId]
+    [database, teamCharId]
   )
 
   return (
