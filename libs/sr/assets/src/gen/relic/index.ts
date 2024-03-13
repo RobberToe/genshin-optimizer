@@ -12,7 +12,7 @@ import HunterOfGlacialForest from './HunterOfGlacialForest'
 import InertSalsotto from './InertSalsotto'
 import KnightOfPurityPalace from './KnightOfPurityPalace'
 import MusketeerOfWildWheat from './MusketeerOfWildWheat'
-import PanCosmicCommercialEnterprise from './PanCosmicCommercialEnterprise'
+import PanGalacticCommercialEnterprise from './PanGalacticCommercialEnterprise'
 import PasserbyOfWanderingCloud from './PasserbyOfWanderingCloud'
 import SpaceSealingStation from './SpaceSealingStation'
 import SprightlyVonwacq from './SprightlyVonwacq'
@@ -34,7 +34,7 @@ const data = {
   InertSalsotto,
   KnightOfPurityPalace,
   MusketeerOfWildWheat,
-  PanCosmicCommercialEnterprise,
+  PanGalacticCommercialEnterprise,
   PasserbyOfWanderingCloud,
   SpaceSealingStation,
   SprightlyVonwacq,

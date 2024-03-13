@@ -39,7 +39,7 @@ export const allRelicPlanarSetKeys = [
   'FirmamentFrontlineGlamoth',
   'FleetOfTheAgeless',
   'InertSalsotto',
-  'PanCosmicCommercialEnterprise',
+  'PanGalacticCommercialEnterprise',
   'PenaconyLandOfTheDreams',
   'RutilantArena',
   'SpaceSealingStation',
