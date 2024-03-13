@@ -88,7 +88,6 @@ export default function ChartCard({
     (_e: unknown, value: number | number[]) => {
       if (typeof value === 'number') throw new TypeError()
       const [l, h] = value
-      if (l === h) return
       setSliderLow(l)
       setSliderHigh(h)
     },
@@ -270,8 +269,8 @@ export default function ChartCard({
           )}
         </Grid>
       </CardContent>
-      {chartData && !!chartData.data.length && <Divider />}
-      {chartData && !!chartData.data.length && displayData && (
+      {displayData && !!displayData.length && <Divider />}
+      {chartData && displayData && !!displayData.length && (
         <CardContent>
           <Collapse in={!!downloadData && showDownload}>
             <CardDark sx={{ mb: 2 }}>
@@ -293,7 +292,7 @@ export default function ChartCard({
             valueNode={chartData.valueNode}
             showMin={showMin}
           />
-          {chartData.data.length > 1 && (
+          {displayData.length > 1 && (
             <Slider
               marks
               value={[sliderLow, sliderHigh]}
