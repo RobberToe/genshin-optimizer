@@ -49,6 +49,7 @@ export function BuildEquipped({ active = false }: { active: boolean }) {
     <CardThemed
       bgt="light"
       sx={{
+        undefined,
         boxShadow: active ? '0px 0px 0px 2px green inset' : undefined,
       }}
     >

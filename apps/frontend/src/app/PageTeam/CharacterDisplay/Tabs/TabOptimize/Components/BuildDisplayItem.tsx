@@ -1,8 +1,5 @@
-import {
-  useBoolState,
-  useForceUpdate,
-} from '@genshin-optimizer/common/react-util'
-import { CardThemed, SqBadge } from '@genshin-optimizer/common/ui'
+import { useBoolState } from '@genshin-optimizer/common/react-util'
+import { CardThemed } from '@genshin-optimizer/common/ui'
 import { objKeyMap, toggleArr } from '@genshin-optimizer/common/util'
 import type {
   ArtifactSlotKey,
@@ -26,25 +23,15 @@ import {
 import { Checkroom, ChevronRight } from '@mui/icons-material'
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
-import CheckroomIcon from '@mui/icons-material/Checkroom'
-import InfoIcon from '@mui/icons-material/Info'
 import {
   Box,
   Button,
   CardContent,
   Grid,
   Skeleton,
-  Tooltip,
   Typography,
 } from '@mui/material'
-import {
-  Suspense,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import { Suspense, useCallback, useContext, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ArtifactCardNano from '../../../../../Components/Artifact/ArtifactCardNano'
 import BootstrapTooltip from '../../../../../Components/BootstrapTooltip'
@@ -52,6 +39,7 @@ import CardDark from '../../../../../Components/Card/CardDark'
 import CardLight from '../../../../../Components/Card/CardLight'
 import StatDisplayComponent from '../../../../../Components/Character/StatDisplayComponent'
 import ModalWrapper from '../../../../../Components/ModalWrapper'
+import SqBadge from '../../../../../Components/SqBadge'
 import WeaponCardNano from '../../../../../Components/Weapon/WeaponCardNano'
 import { CharacterContext } from '../../../../../Context/CharacterContext'
 import { DataContext } from '../../../../../Context/DataContext'
@@ -62,6 +50,7 @@ import ArtifactCard from '../../../../../PageArtifact/ArtifactCard'
 import WeaponCard from '../../../../../PageWeapon/WeaponCard'
 import { ArtifactSetBadges } from './ArtifactSetBadges'
 import SetInclusionButton from './SetInclusionButton'
+
 type NewOld = {
   newId: string
   oldId?: string
@@ -83,7 +72,7 @@ export default function BuildDisplayItem({
   disabled,
 }: BuildDisplayItemProps) {
   const {
-    teamChar: { optConfigId, buildType, buildId, buildIds = [] },
+    teamChar: { optConfigId, buildType, buildId },
   } = useContext(TeamCharacterContext)
   const {
     character: { key: characterKey, equippedArtifacts, equippedWeapon },
@@ -93,15 +82,6 @@ export default function BuildDisplayItem({
   ) ?? { mainStatAssumptionLevel: 0, allowLocationsState: 'all' }
   const database = useDatabase()
   const { data, oldData } = useContext(DataContext)
-
-  const [dbDirty, setDbDirty] = useForceUpdate()
-  // update when a build is changed
-  useEffect(() => {
-    const unfollowBuilds = buildIds.map((buildId) =>
-      database.builds.follow(buildId, setDbDirty)
-    )
-    return () => unfollowBuilds.forEach((unFollow) => unFollow())
-  }, [database, buildIds, setDbDirty])
 
   // update when data is recalc'd
   const weaponNewOld = useMemo(
@@ -181,6 +161,25 @@ export default function BuildDisplayItem({
     [artifactIdsBySlot, database.arts]
   )
 
+  const buildEquippedArtifactIds: Record<ArtifactSlotKey, string | undefined> =
+    useMemo(() => {
+      if (buildType === 'tc') return objKeyMap(allArtifactSlotKeys, () => 'tc')
+      if (buildType === 'equipped') return equippedArtifacts
+      if (buildType === 'real') return database.builds.get(buildId)!.artifactIds
+
+      // default
+      return objKeyMap(allArtifactSlotKeys, () => '')
+    }, [buildType, buildId, database, equippedArtifacts])
+
+  const buildEquippedWeaponId: string = useMemo(() => {
+    if (buildType === 'tc') return 'tc'
+    if (buildType === 'equipped') return equippedWeapon
+    if (buildType === 'real')
+      return database.builds.get(buildId)!.weaponId ?? ''
+    // default
+    return ''
+  }, [buildType, buildId, database, equippedWeapon])
+
   const weapNano = useMemo(() => {
     return (
       <Grid item xs={1}>
@@ -224,37 +223,12 @@ export default function BuildDisplayItem({
 
   const currentlyEquipped =
     allArtifactSlotKeys.every(
-      (slotKey) => artifactIdsBySlot[slotKey] === equippedArtifacts[slotKey]
-    ) && data.get(input.weapon.id).value === equippedWeapon
-
-  const sameAsBuildIds = useMemo(
-    () =>
-      dbDirty &&
-      buildIds.filter((buildId) => {
-        const build = database.builds.get(buildId)
-        if (!build) return false
-        const { artifactIds, weaponId } = build
-        return (
-          allArtifactSlotKeys.every(
-            (slotKey) => artifactIdsBySlot[slotKey] === artifactIds[slotKey]
-          ) && data.get(input.weapon.id).value === weaponId
-        )
-      }),
-    [dbDirty, database, buildIds, artifactIdsBySlot, data]
-  )
-
-  const isActiveBuild = buildType === 'real' && sameAsBuildIds.includes(buildId)
-  const isActiveBuildOrEquip =
-    isActiveBuild || (buildType === 'equipped' && currentlyEquipped)
+      (slotKey) =>
+        artifactIdsBySlot[slotKey] === buildEquippedArtifactIds[slotKey]
+    ) && data.get(input.weapon.id).value === buildEquippedWeaponId
 
   return (
-    <CardLight
-      sx={{
-        boxShadow: isActiveBuildOrEquip
-          ? '0px 0px 0px 2px green inset'
-          : undefined,
-      }}
-    >
+    <CardLight>
       <Suspense
         fallback={<Skeleton variant="rectangular" width="100%" height={600} />}
       >
@@ -273,57 +247,22 @@ export default function BuildDisplayItem({
             allowLocationsState={allowLocationsState}
           />
         )}
-        <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <Box display="flex" gap={1} flexWrap="wrap">
+        <CardContent>
+          <Box display="flex" gap={1} sx={{ pb: 1 }} flexWrap="wrap">
             {label !== undefined && (
-              <SqBadge color={currentlyEquipped ? 'success' : 'info'}>
-                <Typography sx={{ display: 'flex', gap: 1 }}>
-                  <strong>{label}</strong>
-                  {/* TODO: Translation */}
-                  {currentlyEquipped && <span>(Equipped)</span>}
+              <SqBadge color="info">
+                <Typography>
+                  <strong>
+                    {label}
+                    {currentlyEquipped ? ' (Equipped)' : ''}
+                  </strong>
                 </Typography>
               </SqBadge>
             )}
-            {!!sameAsBuildIds.length && (
-              <SqBadge color={isActiveBuild ? 'success' : 'info'}>
-                <Typography sx={{ display: 'flex', gap: 1 }}>
-                  <CheckroomIcon />
-                  <span>
-                    {
-                      database.builds.get(
-                        isActiveBuild ? buildId : sameAsBuildIds[0]
-                      )?.name
-                    }
-                  </span>
-                  {/* TODO: Translation */}
-                  {isActiveBuild && <span>(current build)</span>}
-                  {sameAsBuildIds.length > 1 && (
-                    <Tooltip
-                      arrow
-                      title={
-                        <Box>
-                          {sameAsBuildIds.map((buildId) => (
-                            <Typography
-                              sx={{
-                                display: 'flex',
-                                gap: 1,
-                                alignItems: 'center',
-                              }}
-                            >
-                              <CheckroomIcon />
-                              {database.builds.get(buildId)?.name}
-                            </Typography>
-                          ))}
-                        </Box>
-                      }
-                    >
-                      <InfoIcon />
-                    </Tooltip>
-                  )}
-                </Typography>
-              </SqBadge>
-            )}
-            <ArtifactSetBadges artifacts={artifacts} />
+            <ArtifactSetBadges
+              artifacts={artifacts}
+              currentlyEquipped={currentlyEquipped}
+            />
             <Box
               sx={{ flexGrow: 1, display: 'flex', justifyContent: 'flex-end' }}
             />
@@ -332,23 +271,22 @@ export default function BuildDisplayItem({
               size="small"
               color="success"
               onClick={equipBuild}
-              disabled={disabled || isActiveBuild}
+              disabled={disabled || currentlyEquipped}
               startIcon={<Checkroom />}
             >
-              Equip to Current Build
+              Equip Build
             </Button>
             {extraButtonsRight}
           </Box>
-          <Box>
-            <Grid
-              container
-              spacing={1}
-              columns={{ xs: 2, sm: 3, md: 4, lg: 6 }}
-            >
-              {weapNano}
-              {artNanos}
-            </Grid>
-          </Box>
+          <Grid
+            container
+            spacing={1}
+            sx={{ pb: 1 }}
+            columns={{ xs: 2, sm: 3, md: 4, lg: 6 }}
+          >
+            {weapNano}
+            {artNanos}
+          </Grid>
           <StatDisplayComponent />
         </CardContent>
       </Suspense>
