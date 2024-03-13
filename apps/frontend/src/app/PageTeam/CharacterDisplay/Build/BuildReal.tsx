@@ -121,6 +121,7 @@ export default function BuildReal({
     )
     return tcId && database.teamChars.get(tcId)!.key
   })
+  const canActivate = !active && !!weaponId
 
   const [showPrompt, onShowPrompt, OnHidePrompt] = useBoolState()
   return (
@@ -141,7 +142,7 @@ export default function BuildReal({
         onActive={onActive}
         onCopyToTc={copyToTc}
         onDupe={onDupe}
-        onEquip={weaponId ? onShowPrompt : undefined}
+        onEquip={canActivate ? onShowPrompt : undefined}
         onRemove={onRemove}
       >
         <Box
