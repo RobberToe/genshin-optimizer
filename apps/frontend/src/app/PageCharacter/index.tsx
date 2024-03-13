@@ -2,8 +2,11 @@ import {
   useForceUpdate,
   useMediaQueryUp,
 } from '@genshin-optimizer/common/react-util'
-import { useOnScreen } from '@genshin-optimizer/common/ui'
-import { filterFunction, sortFunction } from '@genshin-optimizer/common/util'
+import {
+  clamp,
+  filterFunction,
+  sortFunction,
+} from '@genshin-optimizer/common/util'
 import type { CharacterKey } from '@genshin-optimizer/gi/consts'
 import {
   allCharacterRarityKeys,
@@ -25,10 +28,12 @@ import {
 import type { ChangeEvent } from 'react'
 import {
   Suspense,
+  useCallback,
   useContext,
   useDeferredValue,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import ReactGA from 'react-ga4'
@@ -38,7 +43,7 @@ import CardDark from '../Components/Card/CardDark'
 import CharacterCard from '../Components/Character/CharacterCard'
 import CharacterEditor from '../Components/Character/CharacterEditor'
 import CharacterSelectionModal from '../Components/Character/CharacterSelectionModal'
-import ShowingAndSortOptionSelect from '../Components/ShowingAndSortOptionSelect'
+import PageAndSortOptionSelect from '../Components/PageAndSortOptionSelect'
 import CharacterRarityToggle from '../Components/ToggleButton/CharacterRarityToggle'
 import ElementToggle from '../Components/ToggleButton/ElementToggle'
 import WeaponToggle from '../Components/ToggleButton/WeaponToggle'
@@ -52,7 +57,7 @@ import {
 } from '../Util/CharacterSort'
 import { catTotal } from '../Util/totalUtils'
 const columns = { xs: 1, sm: 2, md: 3, lg: 4, xl: 4 }
-const numToShowMap = { xs: 5, sm: 8, md: 9, lg: 12, xl: 12 }
+const numToShowMap = { xs: 10, sm: 16, md: 24, lg: 32, xl: 32 }
 const sortKeys = Object.keys(characterSortMap)
 
 export default function PageCharacter() {
@@ -91,8 +96,17 @@ export default function PageCharacter() {
   )
   const [searchTerm, setSearchTerm] = useState('')
   const deferredSearchTerm = useDeferredValue(searchTerm)
+  const invScrollRef = useRef<HTMLDivElement>(null)
+  const setPage = useCallback(
+    (_: ChangeEvent<unknown>, value: number) => {
+      invScrollRef.current?.scrollIntoView({ behavior: 'smooth' })
+      database.displayCharacter.set({ pageIndex: value - 1 })
+    },
+    [database, invScrollRef]
+  )
 
   const brPt = useMediaQueryUp()
+  const maxNumToDisplay = numToShowMap[brPt]
 
   const [newCharacter, setnewCharacter] = useState(false)
   const [dbDirty, forceUpdate] = useForceUpdate()
@@ -114,11 +128,11 @@ export default function PageCharacter() {
 
   const deferredState = useDeferredValue(displayCharacter)
   const deferredDbDirty = useDeferredValue(dbDirty)
-  const { charKeys, totalCharNum } = useMemo(() => {
+  const { charKeyList, totalCharNum } = useMemo(() => {
     const chars = database.chars.keys
     const totalCharNum = chars.length
     const { element, weaponType, rarity, sortType, ascending } = deferredState
-    const charKeys = database.chars.keys
+    const charKeyList = database.chars.keys
       .filter(
         filterFunction(
           { element, weaponType, rarity, name: deferredSearchTerm },
@@ -133,10 +147,35 @@ export default function PageCharacter() {
           ['new', 'favorite']
         )
       )
-    return deferredDbDirty && { charKeys, totalCharNum }
+    return deferredDbDirty && { charKeyList, totalCharNum }
   }, [database, deferredState, deferredSearchTerm, silly, deferredDbDirty])
 
-  const { weaponType, element, rarity, sortType, ascending } = displayCharacter
+  const {
+    weaponType,
+    element,
+    rarity,
+    sortType,
+    ascending,
+    pageIndex = 0,
+  } = displayCharacter
+
+  const { charKeyListToShow, numPages, currentPageIndex } = useMemo(() => {
+    const numPages = Math.ceil(charKeyList.length / maxNumToDisplay)
+    const currentPageIndex = clamp(pageIndex, 0, numPages - 1)
+    return {
+      charKeyListToShow: charKeyList.slice(
+        currentPageIndex * maxNumToDisplay,
+        (currentPageIndex + 1) * maxNumToDisplay
+      ),
+      numPages,
+      currentPageIndex,
+    }
+  }, [charKeyList, pageIndex, maxNumToDisplay])
+
+  const totalShowing =
+    charKeyList.length !== totalCharNum
+      ? `${charKeyList.length}/${totalCharNum}`
+      : `${totalCharNum}`
 
   const weaponTotals = useMemo(
     () =>
@@ -146,10 +185,10 @@ export default function PageCharacter() {
           if (!weapon) return
           const wtk = getWeaponSheet(weapon.key).weaponType
           ct[wtk].total++
-          if (charKeys.includes(ck)) ct[wtk].current++
+          if (charKeyList.includes(ck)) ct[wtk].current++
         })
       ),
-    [database, charKeys]
+    [database, charKeyList]
   )
 
   const elementTotals = useMemo(
@@ -158,10 +197,10 @@ export default function PageCharacter() {
         Object.entries(database.chars.data).forEach(([ck, char]) => {
           const eleKey = getCharSheet(char.key, database.gender).elementKey
           ct[eleKey].total++
-          if (charKeys.includes(ck)) ct[eleKey].current++
+          if (charKeyList.includes(ck)) ct[eleKey].current++
         })
       ),
-    [database, charKeys]
+    [database, charKeyList]
   )
 
   const rarityTotals = useMemo(
@@ -170,40 +209,20 @@ export default function PageCharacter() {
         Object.entries(database.chars.data).forEach(([ck, char]) => {
           const eleKey = getCharSheet(char.key, database.gender).rarity
           ct[eleKey].total++
-          if (charKeys.includes(ck)) ct[eleKey].current++
+          if (charKeyList.includes(ck)) ct[eleKey].current++
         })
       ),
-    [database, charKeys]
+    [database, charKeyList]
   )
 
-  const [numShow, setNumShow] = useState(numToShowMap[brPt])
-  // reset the numShow when artifactIds changes
-  useEffect(() => {
-    charKeys && setNumShow(numToShowMap[brPt])
-  }, [charKeys, brPt])
-
-  const [triggerElement, setTriggerElement] = useState<
-    HTMLElement | undefined
-  >()
-  const trigger = useOnScreen(triggerElement)
-  const shouldIncrease = trigger && numShow < charKeys.length
-  useEffect(() => {
-    if (!shouldIncrease) return
-    setNumShow((num) => num + numToShowMap[brPt])
-  }, [shouldIncrease, brPt])
-
-  const charKeysToShow = useMemo(
-    () => charKeys.slice(0, numShow),
-    [charKeys, numShow]
-  )
-
-  const totalShowing =
-    charKeys.length !== totalCharNum
-      ? `${charKeys.length}/${totalCharNum}`
-      : `${totalCharNum}`
+  const paginationProps = {
+    count: numPages,
+    page: currentPageIndex + 1,
+    onChange: setPage,
+  }
 
   const showingTextProps = {
-    numShowing: charKeysToShow.length,
+    numShowing: charKeyListToShow.length,
     total: totalShowing,
     t: t,
     namespace: 'page_character',
@@ -233,7 +252,7 @@ export default function PageCharacter() {
           onSelect={editCharacter}
         />
       </Suspense>
-      <CardDark>
+      <CardDark ref={invScrollRef}>
         <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
           <Grid container spacing={1}>
             <Grid item>
@@ -290,8 +309,10 @@ export default function PageCharacter() {
             alignItems="flex-end"
             flexWrap="wrap"
           >
-            <ShowingAndSortOptionSelect
+            <PageAndSortOptionSelect
+              paginationProps={paginationProps}
               showingTextProps={showingTextProps}
+              displaySort={true}
               sortByButtonProps={sortByButtonProps}
             />
           </Box>
@@ -312,7 +333,7 @@ export default function PageCharacter() {
         }
       >
         <Grid container spacing={1} columns={columns}>
-          {charKeysToShow.map((charKey) => (
+          {charKeyListToShow.map((charKey) => (
             <Grid item key={charKey} xs={1}>
               <CharacterCard
                 characterKey={charKey}
@@ -323,17 +344,30 @@ export default function PageCharacter() {
           ))}
         </Grid>
       </Suspense>
-      {charKeys.length !== charKeysToShow.length && (
-        <Skeleton
-          ref={(node) => {
-            if (!node) return
-            setTriggerElement(node)
-          }}
-          sx={{ borderRadius: 1 }}
-          variant="rectangular"
-          width="100%"
-          height={100}
-        />
+      {numPages > 1 && (
+        <CardDark>
+          <CardContent sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+            <Button
+              onClick={() => setnewCharacter(true)}
+              color="info"
+              sx={{ minWidth: 0 }}
+            >
+              <AddIcon />
+            </Button>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              flexWrap="wrap"
+              flexGrow={1}
+            >
+              <PageAndSortOptionSelect
+                paginationProps={paginationProps}
+                showingTextProps={showingTextProps}
+              />
+            </Box>
+          </CardContent>
+        </CardDark>
       )}
     </Box>
   )
