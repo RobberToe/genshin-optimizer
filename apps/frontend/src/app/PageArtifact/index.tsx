@@ -23,8 +23,10 @@ import React, {
   useState,
 } from 'react'
 import ReactGA from 'react-ga4'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import AddArtInfo from '../Components/AddArtInfo'
+import SubstatToggle from '../Components/Artifact/SubstatToggle'
+import BootstrapTooltip from '../Components/BootstrapTooltip'
 import CardDark from '../Components/Card/CardDark'
 import InfoComponent from '../Components/InfoComponent'
 import PageAndSortOptionSelect from '../Components/PageAndSortOptionSelect'
@@ -216,6 +218,25 @@ export default function PageArtifact() {
         total={totalArtNum}
         artifactIds={artifactIds}
       />
+      <CardDark ref={invScrollRef}>
+        <CardContent>
+          <BootstrapTooltip
+            placement="top"
+            title={
+              <Trans t={t} i18nKey="efficiencyFilter.title">
+                Substats to use in efficiency calculation
+              </Trans>
+            }
+          >
+            <Box>
+              <SubstatToggle
+                selectedKeys={effFilter}
+                onChange={(n) => database.displayArtifact.set({ effFilter: n })}
+              />
+            </Box>
+          </BootstrapTooltip>
+        </CardContent>
+      </CardDark>
       <CardDark>
         <CardContent>
           <Box
