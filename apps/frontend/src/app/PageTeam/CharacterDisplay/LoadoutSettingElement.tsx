@@ -16,7 +16,6 @@ import {
   CardContent,
   CardHeader,
   Divider,
-  Grid,
   TextField,
   Typography,
 } from '@mui/material'
@@ -24,11 +23,11 @@ import { useContext, useDeferredValue, useEffect, useState } from 'react'
 import CloseButton from '../../Components/CloseButton'
 import { TeamCharacterContext } from '../../Context/TeamCharacterContext'
 import { LoadoutDropdown } from '../LoadoutDropdown'
+import { Build } from './Build/Build'
 import { BuildEquipped } from './Build/BuildEquipped'
-import BuildReal from './Build/BuildReal'
 import BuildTc from './Build/BuildTc'
 // TODO: Translation
-const columns = { xs: 1, sm: 1, md: 2, lg: 2 }
+
 export default function LoadoutSettingElement() {
   const {
     teamId,
@@ -180,12 +179,7 @@ export default function LoadoutSettingElement() {
               A <strong>TC Build</strong> allows the artifacts to be created
               from its stats.
             </Alert>
-            <Grid container columns={columns} spacing={2}>
-              <Grid item xs={1}>
-                <BuildEquipped active={buildType === 'equipped'} />
-              </Grid>
-            </Grid>
-
+            <BuildEquipped active={buildType === 'equipped'} />
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Typography variant="h6">Builds</Typography>
               <Button
@@ -198,19 +192,13 @@ export default function LoadoutSettingElement() {
               </Button>
             </Box>
 
-            <Box>
-              <Grid container columns={columns} spacing={2}>
-                {buildIds.map((id) => (
-                  <Grid item xs={1} key={id}>
-                    <BuildReal
-                      buildId={id}
-                      active={buildType === 'real' && buildId === id}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
-
+            {buildIds.map((id) => (
+              <Build
+                key={id}
+                buildId={id}
+                active={buildType === 'real' && buildId === id}
+              />
+            ))}
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Typography variant="h6">TC Builds</Typography>
               <Button
@@ -227,19 +215,13 @@ export default function LoadoutSettingElement() {
                 New TC Build
               </Button>
             </Box>
-
-            <Box>
-              <Grid container columns={columns} spacing={2}>
-                {buildTcIds.map((id) => (
-                  <Grid item xs={1} key={id}>
-                    <BuildTc
-                      buildTcId={id}
-                      active={buildType === 'tc' && buildTcId === id}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
+            {buildTcIds.map((id) => (
+              <BuildTc
+                key={id}
+                buildTcId={id}
+                active={buildType === 'tc' && buildTcId === id}
+              />
+            ))}
           </CardContent>
         </CardThemed>
       </ModalWrapper>
