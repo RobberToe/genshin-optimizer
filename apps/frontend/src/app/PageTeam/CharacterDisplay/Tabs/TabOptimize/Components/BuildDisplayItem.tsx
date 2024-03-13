@@ -61,7 +61,7 @@ type BuildDisplayItemProps = {
   extraButtonsLeft?: JSX.Element
 }
 
-// TODO: Translation for build UI
+// TODO: Translation for loadout UI
 //for displaying each artifact build
 export default function BuildDisplayItem({
   label,
@@ -89,13 +89,13 @@ export default function BuildDisplayItem({
   const { data } = useContext(DataContext)
   const [newOld, setNewOld] = useState(undefined as NewOld | undefined)
   const close = useCallback(() => setNewOld(undefined), [setNewOld])
-  const buildEquip = buildId && buildType === 'real'
+  const loadoutEquip = buildId && buildType === 'real'
   const equipBuild = useCallback(() => {
-    const confirmMsg = buildEquip
-      ? 'Do you want to equip this build to the currently active build?'
+    const confirmMsg = loadoutEquip
+      ? 'Do you want to equip this build to this loadout?'
       : 'Do you want to equip this build to this character?'
     if (!window.confirm(confirmMsg)) return
-    if (buildEquip) {
+    if (loadoutEquip) {
       database.builds.set(buildId, {
         weaponId: data.get(input.weapon.id).value,
         artifactIds: objKeyMap(allArtifactSlotKeys, (s) =>
@@ -121,7 +121,7 @@ export default function BuildDisplayItem({
       database.weapons.set(weapon, {
         location: charKeyToLocCharKey(characterKey),
       })
-  }, [characterKey, buildEquip, buildId, data, database])
+  }, [characterKey, loadoutEquip, buildId, data, database])
 
   const artifactIdsBySlot = useMemo(
     () =>
@@ -142,7 +142,7 @@ export default function BuildDisplayItem({
     [artifactIdsBySlot, database.arts]
   )
 
-  const buildEquippedArtifactIds: Record<ArtifactSlotKey, string> =
+  const loadoutEquippedArtifactIds: Record<ArtifactSlotKey, string> =
     useMemo(() => {
       if (buildType === 'tc') return objKeyMap(allArtifactSlotKeys, () => 'tc')
       if (buildType === 'equipped') return equippedArtifacts
@@ -154,7 +154,7 @@ export default function BuildDisplayItem({
 
   const compareEquippedArtifactIds: Record<ArtifactSlotKey, string> =
     useMemo(() => {
-      if (!compare) return buildEquippedArtifactIds
+      if (!compare) return loadoutEquippedArtifactIds
       if (compareType === 'tc')
         return objKeyMap(allArtifactSlotKeys, () => 'tc')
       if (compareType === 'equipped') return equippedArtifacts
@@ -169,10 +169,10 @@ export default function BuildDisplayItem({
       compareBuildId,
       database,
       equippedArtifacts,
-      buildEquippedArtifactIds,
+      loadoutEquippedArtifactIds,
     ])
 
-  const buildEquippedWeaponId: string = useMemo(() => {
+  const loadoutEquippedWeaponId: string = useMemo(() => {
     if (buildType === 'tc') return 'tc'
     if (buildType === 'equipped') return equippedWeapon
     if (buildType === 'real') return database.builds.get(buildId).weaponId
@@ -208,8 +208,8 @@ export default function BuildDisplayItem({
   const currentlyEquipped =
     allArtifactSlotKeys.every(
       (slotKey) =>
-        artifactIdsBySlot[slotKey] === buildEquippedArtifactIds[slotKey]
-    ) && data.get(input.weapon.id).value === buildEquippedWeaponId
+        artifactIdsBySlot[slotKey] === loadoutEquippedArtifactIds[slotKey]
+    ) && data.get(input.weapon.id).value === loadoutEquippedWeaponId
 
   return (
     <CardLight>
@@ -291,16 +291,16 @@ function CompareArtifactModal({
   const {
     teamChar: { buildType, buildId },
   } = useContext(TeamCharacterContext)
-  const buildEquip = buildId && buildType === 'real'
+  const loadoutEquip = buildId && buildType === 'real'
   const {
     character: { key: characterKey },
   } = useContext(CharacterContext)
   const onEquip = useCallback(() => {
-    const confirmMsg = buildEquip
-      ? 'Do you want to equip this artifact to this build?'
+    const confirmMsg = loadoutEquip
+      ? 'Do you want to equip this artifact to this loadout?'
       : 'Do you want to equip this artifact to this character?'
     if (!window.confirm(confirmMsg)) return
-    if (buildEquip) {
+    if (loadoutEquip) {
       const art = database.arts.get(newId)
       if (art.slotKey)
         database.builds.set(buildId, (build) => {
@@ -309,7 +309,7 @@ function CompareArtifactModal({
     } else
       database.arts.set(newId, { location: charKeyToLocCharKey(characterKey) })
     onClose()
-  }, [newId, buildEquip, buildId, database, characterKey, onClose])
+  }, [newId, loadoutEquip, buildId, database, characterKey, onClose])
   const newLoc = database.arts.get(newId)?.location ?? ''
   const newArtifact = useArtifact(newId)
   const oldArtifact = useArtifact(oldId)
@@ -350,7 +350,7 @@ function CompareArtifactModal({
                   artifactId={oldId}
                   onDelete={deleteArtifact}
                   mainStatAssumptionLevel={mainStatAssumptionLevel}
-                  canEquip={!buildEquip}
+                  canEquip={!loadoutEquip}
                   editorProps={{
                     disableSet: true,
                     fixedSlotKey: oldArtifact.slotKey,
@@ -384,7 +384,7 @@ function CompareArtifactModal({
               artifactId={newId}
               onDelete={deleteArtifact}
               mainStatAssumptionLevel={mainStatAssumptionLevel}
-              canEquip={!buildEquip}
+              canEquip={!loadoutEquip}
               editorProps={{
                 disableSet: true,
                 fixedSlotKey: newArtifact?.slotKey,

@@ -293,7 +293,7 @@ function TcEquipmentRow() {
         }}
       >
         {/* TODO: Translation */}
-        <SqBadge color="info">TC Build</SqBadge>
+        <SqBadge color="info">TC Loadout</SqBadge>
         {Object.entries(sets).map(([setKey, number]) => (
           <Box
             key={setKey}

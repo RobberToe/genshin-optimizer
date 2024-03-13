@@ -136,14 +136,14 @@ function ArtifactSectionCard() {
   const { data } = useContext(DataContext)
   const hasEquipped = !!Object.values(equippedArtifacts).filter((i) => i).length
 
-  const buildEquip = buildId && buildType === 'real'
+  const loadoutEquip = buildId && buildType === 'real'
   const unequipArts = () => {
-    const confirmMsg = buildEquip
-      ? 'Do you want to unequip all artifacts in this build?'
+    const confirmMsg = loadoutEquip
+      ? 'Do you want to unequip all artifacts in this loadout?'
       : 'Do you want to move all currently equipped artifacts to inventory?'
     if (!window.confirm(confirmMsg)) return
 
-    if (buildEquip)
+    if (loadoutEquip)
       database.builds.set(buildId, {
         artifactIds: objKeyMap(allArtifactSlotKeys, () => undefined),
       })
