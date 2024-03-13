@@ -168,7 +168,6 @@ function OptimizationTargetEditorItem({
         optimizationTarget={path}
         setTarget={(target) => setTarget(target, path, index)}
         defaultText={t('targetSelector.selectBuildTarget')}
-        disabled={disabled}
       />
       <CustomNumberInputButtonGroupWrapper sx={{ flexBasis: 150, flexGrow: 1 }}>
         <CustomNumberInput

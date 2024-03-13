@@ -109,7 +109,6 @@ export default function TabBuild() {
     teamCharId,
     teamChar: { optConfigId, key: characterKey },
     teamId,
-    team,
   } = useContext(TeamCharacterContext)
   const { characterSheet } = useContext(CharacterContext)
   const database = useDatabase()
@@ -173,7 +172,6 @@ export default function TabBuild() {
     levelHigh,
     builds,
     buildDate,
-    useTeammateBuild,
   } = buildSetting
   const { data } = useContext(DataContext)
   const oldData = useOldData()
@@ -198,23 +196,10 @@ export default function TabBuild() {
       levelHigh,
       allowLocationsState,
       useExcludedArts,
-      useTeammateBuild,
     } = deferredArtsDirty && deferredBuildSetting
-
-    const artifactIds = Array.from(
-      new Set(
-        team.teamCharIds
-          .filter((tcId) => tcId !== teamCharId)
-          .map((tcId) => database.teamChars.getLoadoutArtifacts(tcId))
-          .flatMap((arts) => Object.values(arts))
-          .filter((arts) => !!arts)
-          .map(({ id }) => id)
-      )
-    )
 
     return database.arts.values.filter((art) => {
       if (!useExcludedArts && artExclusion.includes(art.id)) return false
-      if (!useTeammateBuild && artifactIds.includes(art.id)) return false
       if (art.level < levelLow) return false
       if (art.level > levelHigh) return false
       const mainStats = mainStatKeys[art.slotKey]
@@ -236,15 +221,7 @@ export default function TabBuild() {
 
       return true
     })
-  }, [
-    characterKey,
-    database.arts.values,
-    database.teamChars,
-    deferredArtsDirty,
-    deferredBuildSetting,
-    team.teamCharIds,
-    teamCharId,
-  ])
+  }, [database, characterKey, deferredArtsDirty, deferredBuildSetting])
 
   const filteredArtIdMap = useMemo(
     () =>
@@ -690,22 +667,6 @@ export default function TabBuild() {
             excludedTotal={excludedTotal.in}
           />
 
-          <Button
-            fullWidth
-            startIcon={
-              useTeammateBuild ? <CheckBox /> : <CheckBoxOutlineBlank />
-            }
-            color={useTeammateBuild ? 'success' : 'secondary'}
-            onClick={() => {
-              database.optConfigs.set(optConfigId, {
-                useTeammateBuild: !useTeammateBuild,
-              })
-            }}
-            disabled={generatingBuilds}
-          >
-            {/* TODO: Translation */}
-            Use artifacts in teammates' builds
-          </Button>
           <Button
             fullWidth
             startIcon={allowPartial ? <CheckBox /> : <CheckBoxOutlineBlank />}
