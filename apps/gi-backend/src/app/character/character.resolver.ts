@@ -1,8 +1,8 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { JWTUser } from '../_decorator/jwtuser.decorator'
 import { GenshinUserService } from '../genshinUser/genshinUser.service'
-import { Character, InputCharacter, UpdateCharacter } from './character.entity'
 import { CharacterService } from './character.service'
+import { Character, InputCharacter, UpdateCharacter } from './character.entity'
 
 @Resolver(() => Character)
 export class CharacterResolver {

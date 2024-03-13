@@ -9,8 +9,8 @@ import {
   allElementKeys,
   allWeaponTypeKeys,
 } from '@genshin-optimizer/gi/consts'
-import type { ArtCharDatabase } from '../ArtCharDatabase'
 import { DataEntry } from '../DataEntry'
+import type { ArtCharDatabase } from '../ArtCharDatabase'
 
 export const characterSortKeys = [
   'new',

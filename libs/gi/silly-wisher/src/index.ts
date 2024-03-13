@@ -1,3 +1,3 @@
-import { portrait } from './portraits'
 import { splash } from './splash'
-export { portrait, splash }
+import { portrait } from './portraits'
+export { splash, portrait }

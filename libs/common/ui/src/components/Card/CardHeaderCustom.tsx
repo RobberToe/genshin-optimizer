@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Typography, Box } from '@mui/material'
 
 export default function CardHeaderCustom({
   avatar,

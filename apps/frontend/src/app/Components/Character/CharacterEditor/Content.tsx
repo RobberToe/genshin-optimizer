@@ -15,7 +15,6 @@ import { DataContext } from '../../../Context/DataContext'
 import { uiInput as input } from '../../../Formula'
 import TeamCard from '../../../PageTeams/TeamCard'
 import CloseButton from '../../CloseButton'
-import ImgIcon from '../../Image/ImgIcon'
 import LevelSelect from '../../LevelSelect'
 import { CharacterCardStats } from '../CharacterCard/CharacterCardStats'
 import {
@@ -25,6 +24,7 @@ import {
 import EquippedGrid from '../EquippedGrid'
 import TalentDropdown from '../TalentDropdown'
 import TravelerGenderSelect from './TravelerGenderSelect'
+import ImgIcon from '../../Image/ImgIcon'
 
 export default function Content({ onClose }: { onClose?: () => void }) {
   const database = useDatabase()

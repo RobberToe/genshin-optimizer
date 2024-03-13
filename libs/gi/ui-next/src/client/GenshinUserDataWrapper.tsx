@@ -1,5 +1,4 @@
 'use client'
-import type { ApolloError } from '@apollo/client'
 import type {
   Artifact,
   Character,
@@ -9,6 +8,7 @@ import { useGetAllDataLazyQuery } from '@genshin-optimizer/gi/frontend-gql'
 import type { ReactNode } from 'react'
 import { createContext, useContext, useEffect, useMemo } from 'react'
 import { UserContext } from './UserDataWrapper'
+import type { ApolloError } from '@apollo/client'
 
 export type GenshinUserDataObj = {
   artifacts?: Artifact[]

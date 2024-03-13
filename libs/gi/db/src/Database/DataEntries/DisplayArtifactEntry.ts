@@ -19,8 +19,8 @@ import {
   allSubstatKeys,
 } from '@genshin-optimizer/gi/consts'
 
-import type { ArtCharDatabase } from '../ArtCharDatabase'
 import { DataEntry } from '../DataEntry'
+import type { ArtCharDatabase } from '../ArtCharDatabase'
 
 export const artifactSortKeys = [
   'rarity',

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { GraphQLError } from 'graphql'
 import { PrismaService } from '../prisma/prisma.service'
+import { GraphQLError } from 'graphql'
 
 @Injectable()
 export class GenshinUserService {

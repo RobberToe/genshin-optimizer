@@ -4,14 +4,14 @@ import { allStats } from '@genshin-optimizer/gi/stats'
 import { input, tally } from '../../../../Formula'
 import {
   compareEq,
-  equal,
   greaterEq,
+  sum,
   lookup,
+  unequal,
+  equal,
   naught,
   subscript,
-  sum,
   threshold,
-  unequal,
 } from '../../../../Formula/utils'
 import { st } from '../../../SheetUtil'
 import type { IWeaponSheet } from '../../IWeaponSheet'

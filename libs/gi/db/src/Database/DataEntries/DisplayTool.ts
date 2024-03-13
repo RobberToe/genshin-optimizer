@@ -1,6 +1,6 @@
 import { HOUR_MS } from '@genshin-optimizer/common/util'
-import type { ArtCharDatabase } from '../ArtCharDatabase'
 import { DataEntry } from '../DataEntry'
+import type { ArtCharDatabase } from '../ArtCharDatabase'
 
 export const RESIN_MAX = 160
 export const timeZones = {

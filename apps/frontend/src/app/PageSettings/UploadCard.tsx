@@ -5,7 +5,6 @@ import {
   type ImportResult,
   type ImportResultCounter,
 } from '@genshin-optimizer/gi/db'
-import { DatabaseContext } from '@genshin-optimizer/gi/db-ui'
 import { CheckBox, CheckBoxOutlineBlank, FileOpen } from '@mui/icons-material'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import TextSnippetIcon from '@mui/icons-material/TextSnippet'
@@ -24,6 +23,7 @@ import { useCallback, useContext, useMemo, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import CardDark from '../Components/Card/CardDark'
 import CardLight from '../Components/Card/CardLight'
+import { DatabaseContext } from '@genshin-optimizer/gi/db-ui'
 
 const InvisInput = styled('input')({
   display: 'none',

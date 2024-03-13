@@ -1,5 +1,3 @@
-import type { ArtifactSetKey } from '@genshin-optimizer/gi/consts'
-import ColorText from '../../../Components/ColoredText'
 import { input } from '../../../Formula'
 import type { Data } from '../../../Formula/type'
 import { equal, greaterEq, percent } from '../../../Formula/utils'
@@ -8,6 +6,8 @@ import { cond, stg, trans } from '../../SheetUtil'
 import { ArtifactSheet, setHeaderTemplate } from '../ArtifactSheet'
 import type { IArtifactSheet } from '../IArtifactSheet'
 import { dataObjForArtifactSheet } from '../dataUtil'
+import type { ArtifactSetKey } from '@genshin-optimizer/gi/consts'
+import ColorText from '../../../Components/ColoredText'
 const key: ArtifactSetKey = 'ArchaicPetra'
 const setHeader = setHeaderTemplate(key)
 const [, trm] = trans('artifact', key)

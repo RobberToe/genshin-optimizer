@@ -1,5 +1,5 @@
-import { characterAsset } from '@genshin-optimizer/gi/assets'
 import type { CharacterKey, GenderKey } from '@genshin-optimizer/gi/consts'
+import { characterAsset } from '@genshin-optimizer/gi/assets'
 import { portrait } from '@genshin-optimizer/gi/silly-wisher'
 
 export function iconAsset(

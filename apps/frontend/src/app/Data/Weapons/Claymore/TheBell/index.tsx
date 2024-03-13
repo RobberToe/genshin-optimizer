@@ -1,12 +1,12 @@
+import { input } from '../../../../Formula'
+import { infoMut, equal, prod, subscript } from '../../../../Formula/utils'
 import type { WeaponKey } from '@genshin-optimizer/gi/consts'
 import { allStats } from '@genshin-optimizer/gi/stats'
-import { input } from '../../../../Formula'
-import { equal, infoMut, prod, subscript } from '../../../../Formula/utils'
 import { customShieldNode } from '../../../Characters/dataUtil'
-import { cond, st, stg } from '../../../SheetUtil'
+import { cond, stg, st } from '../../../SheetUtil'
+import { dataObjForWeaponSheet } from '../../util'
 import type { IWeaponSheet } from '../../IWeaponSheet'
 import WeaponSheet, { headerTemplate } from '../../WeaponSheet'
-import { dataObjForWeaponSheet } from '../../util'
 
 const key: WeaponKey = 'TheBell'
 const data_gen = allStats.weapon.data[key]

@@ -1,4 +1,5 @@
 import { Box } from '@mui/material'
+import React from 'react'
 import ReactGA from 'react-ga4'
 import EXPCalc from './EXPCalc'
 import ResinCounter from './ResinCounter'

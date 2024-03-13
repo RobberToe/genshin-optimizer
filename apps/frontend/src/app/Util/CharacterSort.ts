@@ -12,8 +12,8 @@ import {
   charKeyToLocCharKey,
   charKeyToLocGenderedCharKey,
 } from '@genshin-optimizer/gi/consts'
-import type { ArtCharDatabase } from '@genshin-optimizer/gi/db'
 import { allStats, getCharEle } from '@genshin-optimizer/gi/stats'
+import type { ArtCharDatabase } from '@genshin-optimizer/gi/db'
 import i18n from '../i18n'
 export const characterSortKeys = [
   'new',

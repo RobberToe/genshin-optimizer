@@ -8,8 +8,8 @@ import {
   Resolver,
 } from '@nestjs/graphql'
 import { JWTUser } from '../_decorator/jwtuser.decorator'
-import { GenshinUser } from '../genshinUser/genshinUser.resolver'
 import { UserService } from './user.service'
+import { GenshinUser } from '../genshinUser/genshinUser.resolver'
 
 @ObjectType()
 export class CreateUserNameResponse {
