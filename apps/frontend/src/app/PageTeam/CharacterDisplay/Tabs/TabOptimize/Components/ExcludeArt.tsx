@@ -3,7 +3,7 @@ import {
   useForceUpdate,
   useMediaQueryUp,
 } from '@genshin-optimizer/common/react-util'
-import { useInfScroll } from '@genshin-optimizer/common/ui'
+import { useOnScreen } from '@genshin-optimizer/common/ui'
 import { filterFunction } from '@genshin-optimizer/common/util'
 import { useDatabase, useOptConfig } from '@genshin-optimizer/gi/db-ui'
 import AddIcon from '@mui/icons-material/Add'
@@ -27,6 +27,7 @@ import {
   useEffect,
   useMemo,
   useReducer,
+  useState,
 } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import ArtifactCardNano from '../../../../../Components/Artifact/ArtifactCardNano'
@@ -242,10 +243,20 @@ function ArtifactSelectModal({
     )
   }, [dbDirty, database, filterConfigs, filterOption, artExclusion])
 
-  const { numShow, setTriggerElement } = useInfScroll(
-    numToShowMap[brPt],
-    artifactIds.length
-  )
+  const [element, setElement] = useState<HTMLElement | undefined>()
+  const trigger = useOnScreen(element)
+  const [numShow, setNumShow] = useState(numToShowMap[brPt])
+  // reset the numShow when artifactIds changes
+  useEffect(() => {
+    artifactIds && setNumShow(numToShowMap[brPt])
+  }, [artifactIds, brPt])
+
+  const shouldIncrease = trigger && numShow < artifactIds.length
+  useEffect(() => {
+    if (!shouldIncrease) return
+    setNumShow((num) => num + numToShowMap[brPt])
+  }, [shouldIncrease, brPt])
+
   const artifactIdsToShow = useMemo(
     () => artifactIds.slice(0, numShow),
     [artifactIds, numShow]
@@ -299,7 +310,7 @@ function ArtifactSelectModal({
               <Skeleton
                 ref={(node) => {
                   if (!node) return
-                  setTriggerElement(node)
+                  setElement(node)
                 }}
                 sx={{ borderRadius: 1, mt: 1 }}
                 variant="rectangular"
