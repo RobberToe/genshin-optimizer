@@ -39,7 +39,6 @@ import TheDockhandsAssistant from './TheDockhandsAssistant'
 import TheFlute from './TheFlute'
 import ToukabouShigure from './ToukabouShigure'
 import TravelersHandySword from './TravelersHandySword'
-import UrakuMisugiri from './UrakuMisugiri'
 import WolfFang from './WolfFang'
 import XiphosMoonlight from './XiphosMoonlight'
 const sword: Record<WeaponSwordKey, WeaponSheet> = {
@@ -82,7 +81,6 @@ const sword: Record<WeaponSwordKey, WeaponSheet> = {
   TheFlute,
   ToukabouShigure,
   TravelersHandySword,
-  UrakuMisugiri,
   WolfFang,
   XiphosMoonlight,
 } as const

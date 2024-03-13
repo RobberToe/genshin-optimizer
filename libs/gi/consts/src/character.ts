@@ -76,7 +76,6 @@ export const nonTravelerCharacterKeys = [
   'Candace',
   'Charlotte',
   'Chevreuse',
-  'Chiori',
   'Chongyun',
   'Collei',
   'Cyno',

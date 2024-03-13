@@ -7,7 +7,6 @@ import BlackcliffPole from './BlackcliffPole'
 import CalamityQueller from './CalamityQueller'
 import CrescentPike from './CrescentPike'
 import Deathmatch from './Deathmatch'
-import DialoguesOfTheDesertSages from './DialoguesOfTheDesertSages'
 import DragonsBane from './DragonsBane'
 import DragonspineSpear from './DragonspineSpear'
 import EngulfingLightning from './EngulfingLightning'
@@ -38,7 +37,6 @@ const polearm: Record<WeaponPoleArmKey, WeaponSheet> = {
   CalamityQueller,
   CrescentPike,
   Deathmatch,
-  DialoguesOfTheDesertSages,
   DragonsBane,
   DragonspineSpear,
   EngulfingLightning,

@@ -28,7 +28,6 @@ import CrescentPike from './CrescentPike'
 import DarkIronSword from './DarkIronSword'
 import Deathmatch from './Deathmatch'
 import DebateClub from './DebateClub'
-import DialoguesOfTheDesertSages from './DialoguesOfTheDesertSages'
 import DodocoTales from './DodocoTales'
 import DragonsBane from './DragonsBane'
 import DragonspineSpear from './DragonspineSpear'
@@ -167,7 +166,6 @@ import TravelersHandySword from './TravelersHandySword'
 import TulaytullahsRemembrance from './TulaytullahsRemembrance'
 import TwinNephrite from './TwinNephrite'
 import UltimateOverlordsMegaMagicSword from './UltimateOverlordsMegaMagicSword'
-import UrakuMisugiri from './UrakuMisugiri'
 import Verdict from './Verdict'
 import VortexVanquisher from './VortexVanquisher'
 import WanderingEvenstar from './WanderingEvenstar'
@@ -212,7 +210,6 @@ const data = {
   DarkIronSword,
   Deathmatch,
   DebateClub,
-  DialoguesOfTheDesertSages,
   DodocoTales,
   DragonsBane,
   DragonspineSpear,
@@ -351,7 +348,6 @@ const data = {
   TulaytullahsRemembrance,
   TwinNephrite,
   UltimateOverlordsMegaMagicSword,
-  UrakuMisugiri,
   Verdict,
   VortexVanquisher,
   WanderingEvenstar,

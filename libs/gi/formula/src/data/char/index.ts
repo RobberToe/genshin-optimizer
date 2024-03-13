@@ -10,8 +10,6 @@ import Beidou from './Beidou'
 import Bennett from './Bennett'
 import Candace from './Candace'
 import Charlotte from './Charlotte'
-import Chevreuse from './Chevreuse'
-import Chiori from './Chiori'
 import Chongyun from './Chongyun'
 import Collei from './Collei'
 import Cyno from './Cyno'
@@ -24,7 +22,6 @@ import Faruzan from './Faruzan'
 import Fischl from './Fischl'
 import Freminet from './Freminet'
 import Furina from './Furina'
-import Gaming from './Gaming'
 import Ganyu from './Ganyu'
 import Gorou from './Gorou'
 import HuTao from './HuTao'
@@ -46,7 +43,6 @@ import Lyney from './Lyney'
 import Mika from './Mika'
 import Mona from './Mona'
 import Nahida from './Nahida'
-import Navia from './Navia'
 import Neuvillette from './Neuvillette'
 import Nilou from './Nilou'
 import Ningguang from './Ningguang'
@@ -64,11 +60,15 @@ import Sucrose from './Sucrose'
 import Tartaglia from './Tartaglia'
 import Thoma from './Thoma'
 import Tighnari from './Tighnari'
+import TravelerAnemo from './TravelerAnemo'
+import TravelerDendro from './TravelerDendro'
+import TravelerElectro from './TravelerElectro'
+import TravelerGeo from './TravelerGeo'
+import TravelerHydro from './TravelerHydro'
 import Venti from './Venti'
 import Wanderer from './Wanderer'
 import Wriothesley from './Wriothesley'
 import Xiangling from './Xiangling'
-import Xianyun from './Xianyun'
 import Xiao from './Xiao'
 import Xingqiu from './Xingqiu'
 import Xinyan from './Xinyan'
@@ -79,11 +79,6 @@ import Yelan from './Yelan'
 import Yoimiya from './Yoimiya'
 import YunJin from './YunJin'
 import Zhongli from './Zhongli'
-import TravelerAnemo from './TravelerAnemo'
-import TravelerGeo from './TravelerGeo'
-import TravelerElectro from './TravelerElectro'
-import TravelerDendro from './TravelerDendro'
-import TravelerHydro from './TravelerHydro'
 
 const data: TagMapNodeEntries[] = [
   Albedo,
@@ -97,8 +92,6 @@ const data: TagMapNodeEntries[] = [
   Bennett,
   Candace,
   Charlotte,
-  Chevreuse,
-  Chiori,
   Chongyun,
   Collei,
   Cyno,
@@ -111,7 +104,6 @@ const data: TagMapNodeEntries[] = [
   Fischl,
   Freminet,
   Furina,
-  Gaming,
   Ganyu,
   Gorou,
   HuTao,
@@ -133,7 +125,6 @@ const data: TagMapNodeEntries[] = [
   Mika,
   Mona,
   Nahida,
-  Navia,
   Neuvillette,
   Nilou,
   Ningguang,
@@ -155,7 +146,6 @@ const data: TagMapNodeEntries[] = [
   Wanderer,
   Wriothesley,
   Xiangling,
-  Xianyun,
   Xiao,
   Xingqiu,
   Xinyan,
