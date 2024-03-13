@@ -1,7 +1,7 @@
 import { useBoolState } from '@genshin-optimizer/common/react-util'
 import { weaponAsset } from '@genshin-optimizer/gi/assets'
 import type { ICachedWeapon } from '@genshin-optimizer/gi/db'
-import { useDatabase, useWeapon } from '@genshin-optimizer/gi/db-ui'
+import { useDBMeta, useDatabase, useWeapon } from '@genshin-optimizer/gi/db-ui'
 import { milestoneLevelsLow } from '@genshin-optimizer/gi/util'
 import { Lock, LockOpen } from '@mui/icons-material'
 import {
@@ -27,6 +27,7 @@ import ModalWrapper from '../Components/ModalWrapper'
 import RefinementDropdown from '../Components/RefinementDropdown'
 import { StarsDisplay } from '../Components/StarDisplay'
 import { DataContext } from '../Context/DataContext'
+import { getCharSheet } from '../Data/Characters'
 import type CharacterSheet from '../Data/Characters/CharacterSheet'
 import { getWeaponSheet } from '../Data/Weapons'
 import { uiInput as input } from '../Formula'
@@ -68,6 +69,16 @@ export default function WeaponEditor({
     },
     [propWeaponId, database]
   )
+  const { gender } = useDBMeta()
+  const characterSheet = useMemo(
+    () =>
+      location
+        ? getCharSheet(database.chars.LocationToCharacterKey(location), gender)
+        : undefined,
+    [database, gender, location]
+  )
+
+  const initialWeaponFilter = characterSheet && characterSheet.weaponTypeKey
 
   const setLocation = useCallback(
     (k: LocationKey) => id && database.weapons.set(id, { location: k }),
@@ -110,8 +121,7 @@ export default function WeaponEditor({
           show={showModal}
           onHide={onHideModal}
           onSelect={(k) => weaponDispatch({ key: k })}
-          // can only swap to a weapon of the same type, to accomodate loadout
-          weaponTypeFilter={weaponSheet && weaponSheet.weaponType}
+          weaponTypeFilter={initialWeaponFilter}
         />
         <CardContent>
           {weaponSheet && weaponUIData && (

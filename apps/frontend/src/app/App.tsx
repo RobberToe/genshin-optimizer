@@ -4,7 +4,7 @@ import {
 } from '@genshin-optimizer/common/database'
 import { ArtCharDatabase } from '@genshin-optimizer/gi/db'
 import { DatabaseContext } from '@genshin-optimizer/gi/db-ui'
-import { SillyContext, theme, useSilly } from '@genshin-optimizer/gi/ui'
+import { theme } from '@genshin-optimizer/gi/ui'
 import { KeyboardArrowUp } from '@mui/icons-material'
 import {
   Box,
@@ -22,6 +22,7 @@ import React, { Suspense, lazy, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { HashRouter, Route, Routes, useMatch } from 'react-router-dom'
 import './App.scss'
+import { SillyContext, useSilly } from './Context/SillyContext'
 import { SnowContext, useSnow } from './Context/SnowContext'
 import ErrorBoundary from './ErrorBoundary'
 import Footer from './Footer'
@@ -38,8 +39,7 @@ const PageWeapon = lazy(() => import('./PageWeapon'))
 const PageDocumentation = lazy(() => import('./PageDocumentation'))
 const PageScanner = lazy(() => import('./PageScanner'))
 const PageCharacter = lazy(() => import('./PageCharacter'))
-const PageTeams = lazy(() => import('./PageTeams'))
-const PageTeam = lazy(() => import('./PageTeam'))
+const CharacterDisplay = lazy(() => import('./PageCharacter/CharacterDisplay'))
 
 function ScrollTop({ children }: { children: React.ReactElement }) {
   const trigger = useScrollTrigger({
@@ -159,10 +159,9 @@ function Content() {
             <Route index element={<PageHome />} />
             <Route path="/artifacts" element={<PageArtifact />} />
             <Route path="/weapons" element={<PageWeapon />} />
-            <Route path="/characters/*" element={<PageCharacter />} />
-            <Route path="/teams/*">
-              <Route index element={<PageTeams />} />
-              <Route path=":teamId/*" element={<PageTeam />} />
+            <Route path="/characters/*">
+              <Route index element={<PageCharacter />} />
+              <Route path=":characterKey/*" element={<CharacterDisplay />} />
             </Route>
             <Route path="/tools" element={<PageTools />} />
             <Route path="/setting" element={<PageSettings />} />

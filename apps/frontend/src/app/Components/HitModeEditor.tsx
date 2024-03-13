@@ -8,8 +8,6 @@ import {
   allAmpReactionKeys,
   allHitModeKeys,
 } from '@genshin-optimizer/gi/consts'
-import { useDatabase } from '@genshin-optimizer/gi/db-ui'
-import { isCharMelee } from '@genshin-optimizer/gi/stats'
 import {
   CryoIcon,
   ElectroIcon,
@@ -22,7 +20,6 @@ import { useContext } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CharacterContext } from '../Context/CharacterContext'
 import { DataContext } from '../Context/DataContext'
-import { TeamCharacterContext } from '../Context/TeamCharacterContext'
 import { infusionNode, uiInput as input } from '../Formula'
 import { allowedAdditiveReactions, allowedAmpReactions } from '../Types/consts'
 import AdditiveReactionModeText from './AdditiveReactionModeText'
@@ -65,20 +62,16 @@ type InfusionAuraDropdownProps = Omit<
 >
 export function InfusionAuraDropdown(props: InfusionAuraDropdownProps) {
   const {
-    teamCharId,
-    teamChar: { infusionAura },
-  } = useContext(TeamCharacterContext)
-  const {
-    character: { key: characterKey },
+    characterSheet,
+    character: { infusionAura },
+    characterDispatch,
   } = useContext(CharacterContext)
-  const database = useDatabase()
-  if (!isCharMelee(characterKey)) return null
+  if (!characterSheet?.isMelee()) return null
   return (
     <DropdownButton
-      title={infusionVals[infusionAura || '']}
+      title={infusionVals[infusionAura]}
       color={infusionAura || 'secondary'}
       disableElevation
-      disabled={!teamCharId}
       {...props}
     >
       {Object.entries(infusionVals).map(([key, text]) => (
@@ -87,9 +80,7 @@ export function InfusionAuraDropdown(props: InfusionAuraDropdownProps) {
           sx={key ? { color: `${key}.main` } : undefined}
           selected={key === infusionAura}
           disabled={key === infusionAura}
-          onClick={() =>
-            database.teamChars.set(teamCharId, { infusionAura: key })
-          }
+          onClick={() => characterDispatch({ infusionAura: key })}
         >
           {text}
         </MenuItem>
@@ -102,10 +93,9 @@ type ReactionToggleProps = Omit<ToggleButtonGroupProps, 'color'>
 export function ReactionToggle(props: ReactionToggleProps) {
   const { t } = useTranslation('page_character')
   const {
-    teamCharId,
-    teamChar: { reaction },
-  } = useContext(TeamCharacterContext)
-  const database = useDatabase()
+    character: { reaction },
+    characterDispatch,
+  } = useContext(CharacterContext)
   const { data } = useContext(DataContext)
   const charEleKey = data.get(input.charEle).value as ElementKey
   const infusion = data.get(infusionNode).value as ElementKey
@@ -122,10 +112,7 @@ export function ReactionToggle(props: ReactionToggleProps) {
       exclusive
       baseColor="secondary"
       value={reaction}
-      onChange={(_, reaction) =>
-        database.teamChars.set(teamCharId, { reaction })
-      }
-      disabled={!teamCharId}
+      onChange={(_, reaction) => characterDispatch({ reaction })}
       {...props}
     >
       <ToggleButton value="" disabled={!reaction}>{t`noReaction`}</ToggleButton>
@@ -145,17 +132,15 @@ type HitModeToggleProps = Omit<ToggleButtonGroupProps, 'color'>
 export function HitModeToggle(props: HitModeToggleProps) {
   const { t } = useTranslation('page_character')
   const {
-    teamCharId,
-    teamChar: { hitMode = 'avgHit' },
-  } = useContext(TeamCharacterContext)
-  const database = useDatabase()
+    character: { hitMode },
+    characterDispatch,
+  } = useContext(CharacterContext)
   return (
     <SolidToggleButtonGroup
       exclusive
       baseColor="secondary"
       value={hitMode}
-      onChange={(_, hitMode) => database.teamChars.set(teamCharId, { hitMode })}
-      disabled={!teamCharId}
+      onChange={(_, hitMode) => characterDispatch({ hitMode })}
       {...props}
     >
       {allHitModeKeys.map((hm) => (

@@ -186,9 +186,9 @@ export class CharacterDataManager extends SroDataManager<
     return this.get(key) as ICachedSroCharacter
   }
 
-  override remove(key: CharacterKey): ICachedSroCharacter | undefined {
+  override remove(key: CharacterKey) {
     const char = this.get(key)
-    if (!char) return undefined
+    if (!char) return
     for (const relicKey of Object.values(char.equippedRelics)) {
       const relic = this.database.relics.get(relicKey)
       // Only unequip relic from Trailblazer if there are no more "Trailblazer"s in the database
@@ -219,7 +219,7 @@ export class CharacterDataManager extends SroDataManager<
         ...lightCone,
         location: '',
       })
-    return super.remove(key)
+    super.remove(key)
   }
 
   /**
