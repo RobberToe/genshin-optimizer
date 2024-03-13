@@ -269,6 +269,7 @@ function CharacterCardWeaponFull({ teamCharId }: { teamCharId: string }) {
       return database.weapons.get(weaponId)
     else return database.teamChars.getLoadoutWeapon(teamCharId) // TC build
   }, [database, data, teamCharId])
+  console.log({ weapon })
   if (!weapon) return null
   return <WeaponFullCardObj weapon={weapon} bgt="light" />
 }
