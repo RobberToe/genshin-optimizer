@@ -40,8 +40,7 @@
     "artsetkey": "Artifact Set",
     "efficiency": "Current RV",
     "mefficiency": "Maximum RV",
-    "probability": "Roll Probability",
-    "lastEdit": "Recently Edited"
+    "probability": "Roll Probability"
   },
   "delete": "Delete",
   "locked": "Locked",

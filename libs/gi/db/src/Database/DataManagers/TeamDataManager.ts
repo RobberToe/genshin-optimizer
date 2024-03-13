@@ -14,7 +14,6 @@ export interface Team {
   >
 
   teamCharIds: string[]
-  lastEdit: number
 }
 
 export class TeamDataManager extends DataManager<
@@ -92,7 +91,7 @@ function validateTeam(
   obj: unknown = {},
   database: ArtCharDatabase
 ): Team | undefined {
-  let { name, description, enemyOverride, teamCharIds, lastEdit } = obj as Team
+  let { name, description, enemyOverride, teamCharIds } = obj as Team
   if (typeof name !== 'string') name = 'Team Name'
   if (typeof description !== 'string') description = 'Team Description'
 
@@ -103,8 +102,6 @@ function validateTeam(
     enemyOverride = {}
 
   if (!Array.isArray(teamCharIds)) teamCharIds = []
-
-  if (typeof lastEdit !== 'number') lastEdit = Date.now()
   else {
     const charIds = database.teamChars.keys
     teamCharIds = teamCharIds.filter((id) => charIds.includes(id))
@@ -116,6 +113,5 @@ function validateTeam(
     description,
     enemyOverride,
     teamCharIds,
-    lastEdit,
   }
 }
