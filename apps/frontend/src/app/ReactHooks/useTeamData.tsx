@@ -46,7 +46,7 @@ export default function useTeamData(
   const [dbDirty, setDbDirty] = useForceUpdate()
   const dbDirtyDeferred = useDeferredValue(dbDirty)
   const { gender } = useDBMeta()
-  const { teamCharIds } = useTeam(teamId) ?? { teamCharIds: [] as string[] }
+  const { teamCharIds } = useTeam(teamId) ?? { teamCharIds: [] }
   const data = useMemo(
     () =>
       dbDirtyDeferred &&
@@ -78,22 +78,34 @@ export default function useTeamData(
 
   useEffect(() => {
     if (!dbDirty) return () => {}
-    const unfollowTeamChars = teamCharIds.map((teamCharId) => {
-      const unfollowTeamChar = database.teamChars.follow(teamCharId, setDbDirty)
-      const unfollowChar = database.teamChars.followChar(teamCharId, setDbDirty)
-      const unfollowBuild = database.teamChars.followBuild(
-        teamCharId,
-        setDbDirty
-      )
-      return () => {
-        unfollowTeamChar()
-        unfollowChar()
-        unfollowBuild()
-      }
+    const unfollowTeamChars = teamCharIds.map((teamCharId) =>
+      database.teamChars.follow(teamCharId, (_k, r) => {
+        if (r === 'update') setDbDirty()
+      })
+    )
+    const unfollowChars = teamCharIds.map((teamCharId) => {
+      const teamChar = database.teamChars.get(teamCharId)
+      if (!teamChar) return () => {}
+      return database.chars.follow(teamChar.key, (_k, r) => {
+        if (r === 'update') setDbDirty()
+      })
+    })
+    const unfollowBuilds = teamCharIds.map((teamCharId) => {
+      const teamChar = database.teamChars.get(teamCharId)
+      if (!teamChar) return () => {}
+      if (teamChar.buildType === 'equipped')
+        return database.chars.follow(teamChar.key, () => setDbDirty())
+      else if (teamChar.buildType === 'real')
+        return database.builds.follow(teamChar.buildId, () => setDbDirty())
+      else if (teamChar.buildType === 'tc')
+        return database.buildTcs.follow(teamChar.buildTcId, () => setDbDirty())
+      return () => {}
     })
 
     return () => {
       unfollowTeamChars.forEach((unfollow) => unfollow())
+      unfollowChars.forEach((unfollow) => unfollow())
+      unfollowBuilds.forEach((unfollow) => unfollow())
     }
   }, [dbDirty, database, teamCharIds, setDbDirty])
 

@@ -1,8 +1,7 @@
-import { useForceUpdate } from '@genshin-optimizer/common/react-util'
 import { charKeyToLocCharKey } from '@genshin-optimizer/gi/consts'
 import type { ICachedArtifact, ICachedWeapon } from '@genshin-optimizer/gi/db'
 import { useDBMeta, useDatabase } from '@genshin-optimizer/gi/db-ui'
-import { useContext, useDeferredValue, useEffect, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { TeamCharacterContext } from '../Context/TeamCharacterContext'
 import type { Data } from '../Formula/type'
 import type { UIData } from '../Formula/uiData'
@@ -17,7 +16,6 @@ export default function useOldData(): undefined | UIData {
   const {
     teamId,
     teamCharId,
-    team: { teamCharIds },
     teamChar: {
       key: characterKey,
       compare,
@@ -28,37 +26,8 @@ export default function useOldData(): undefined | UIData {
   } = useContext(TeamCharacterContext)
 
   const { gender } = useDBMeta()
-  const [dbDirty, setDbDirty] = useForceUpdate()
-  const dbDirtyDeferred = useDeferredValue(dbDirty)
-
-  useEffect(
-    () => (teamId ? database.teams.follow(teamId, setDbDirty) : undefined),
-    [teamId, setDbDirty, database]
-  )
-
-  useEffect(() => {
-    if (!dbDirty) return () => {}
-    const unfollowTeamChars = teamCharIds.map((tcId) => {
-      const unfollowTeamChar = database.teamChars.follow(tcId, setDbDirty)
-      const unfollowChar = database.teamChars.followChar(tcId, setDbDirty)
-      const unfollowBuild =
-        tcId === teamCharId
-          ? database.teamChars.followCompareBuild(tcId, setDbDirty)
-          : database.teamChars.followBuild(tcId, setDbDirty)
-      return () => {
-        unfollowTeamChar()
-        unfollowChar()
-        unfollowBuild()
-      }
-    })
-
-    return () => {
-      unfollowTeamChars.forEach((unfollow) => unfollow())
-    }
-  }, [dbDirty, teamCharId, database, teamCharIds, setDbDirty])
 
   return useMemo(() => {
-    if (!dbDirtyDeferred) return undefined
     if (!compare) return undefined
     const { overrideArt, overrideWeapon } = ((): {
       overrideArt: ICachedArtifact[] | Data
@@ -77,7 +46,7 @@ export default function useOldData(): undefined | UIData {
         case 'real': {
           const build = database.builds.get(compareBuildId)
           return {
-            overrideArt: Object.values(build.artifactIds)
+            overrideArt: Object.keys(build.artifactIds)
               .map((id) => database.arts.get(id))
               .filter((a) => a),
             overrideWeapon: database.weapons.get(build.weaponId),
@@ -95,6 +64,7 @@ export default function useOldData(): undefined | UIData {
         }
       }
     })()
+
     const teamData = getTeamDataCalc(
       database,
       teamId,
@@ -108,7 +78,6 @@ export default function useOldData(): undefined | UIData {
     const charUIData = teamData[characterKey].target
     return charUIData
   }, [
-    dbDirtyDeferred,
     characterKey,
     teamCharId,
     teamId,
