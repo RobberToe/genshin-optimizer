@@ -180,10 +180,7 @@ export default function CharacterSelectionModal({
   return (
     <ModalWrapper
       open={show}
-      onClose={() => {
-        setSearchTerm('')
-        onHide()
-      }}
+      onClose={onHide}
       sx={{ '& .MuiContainer-root': { justifyContent: 'normal' } }}
     >
       <CardDark>
@@ -237,12 +234,7 @@ export default function CharacterSelectionModal({
               database.displayCharacter.set({ ascending })
             }
           />
-          <CloseButton
-            onClick={() => {
-              setSearchTerm('')
-              onHide()
-            }}
-          />
+          <CloseButton onClick={onHide} />
         </CardContent>
         <Divider />
         <DataContext.Provider value={{ teamData: undefined } as any}>
@@ -257,7 +249,6 @@ export default function CharacterSelectionModal({
                   <SelectionCard
                     characterKey={characterKey}
                     onClick={() => {
-                      setSearchTerm('')
                       onHide()
                       onSelect?.(characterKey)
                     }}
