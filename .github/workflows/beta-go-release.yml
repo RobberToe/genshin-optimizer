@@ -17,3 +17,4 @@ jobs:
       frontend_name: 'frontend'
       deployment_name: 'beta'
       show_dev_components: true
+    secrets: inherit
