@@ -196,9 +196,7 @@ function InTeam() {
             <TeamCard
               bgt="light"
               teamId={teamId}
-              onClick={(cid) =>
-                navigate(`/teams/${teamId}${cid ? `/${cid}` : ''}`)
-              }
+              onClick={() => navigate(`/teams/${teamId}`)}
               disableButtons
             />
           </Grid>
