@@ -44,13 +44,13 @@ const overrideArr = range(0, 3)
 const overrideOtherNum = lookup(
   condOverrideOther,
   objKeyMap(overrideArr, (numOther) => constant(numOther)),
-  -1
+  undefined
 )
 const [condOverrideSamePath, condOverrideSame] = cond(key, 'overrideSame')
 const overrideSameNum = lookup(
   condOverrideSame,
   objKeyMap(overrideArr, (numSame) => constant(numSame)),
-  -1
+  undefined
 )
 
 const set4_atk_ = greaterEq(
@@ -61,7 +61,7 @@ const set4_atk_ = greaterEq(
     'on',
     prod(
       percent(0.14),
-      compareEq(overrideSameNum, -1, autoSameNum, overrideSameNum)
+      compareEq(overrideSameNum, undefined, autoSameNum, overrideSameNum)
     )
   )
 )
@@ -72,7 +72,10 @@ const set4_eleMas = greaterEq(
   equal(
     condPassive,
     'on',
-    prod(50, compareEq(overrideOtherNum, -1, autoOtherNum, overrideOtherNum)),
+    prod(
+      50,
+      compareEq(overrideOtherNum, undefined, autoOtherNum, overrideOtherNum)
+    ),
     KeyMap.info('eleMas')
   )
 )

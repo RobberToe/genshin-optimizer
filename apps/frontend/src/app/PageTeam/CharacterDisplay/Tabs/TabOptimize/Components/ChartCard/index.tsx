@@ -79,9 +79,7 @@ export default function ChartCard({
   const {
     teamChar: { optConfigId },
   } = useContext(TeamCharacterContext)
-  const { builds: generatedBuilds } = useOptConfig(optConfigId) ?? {
-    builds: [] as GeneratedBuild[],
-  }
+  const { builds: generatedBuilds } = useOptConfig(optConfigId)
 
   const [sliderLow, setSliderLow] = useState(-Infinity)
   const [sliderHigh, setSliderHigh] = useState(Infinity)
@@ -340,9 +338,7 @@ function Chart({
 }) {
   const { graphBuilds, setGraphBuilds } = useContext(GraphContext)
   const { t } = useTranslation('page_character_optimize')
-  const [selectedPoint, setSelectedPoint] = useState<
-    EnhancedPoint | undefined
-  >()
+  const [selectedPoint, setSelectedPoint] = useState<EnhancedPoint>()
   const addBuildToList = useCallback(
     (build: GeneratedBuild) => {
       setGraphBuilds([...(graphBuilds ?? []), build])

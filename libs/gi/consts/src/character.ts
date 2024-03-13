@@ -185,9 +185,6 @@ export const allCharacterKeys = [
   ...allTravelerKeys,
 ] as const
 export type CharacterKey = (typeof allCharacterKeys)[number]
-export function isCharacterKey(key: string): key is CharacterKey {
-  return allCharacterKeys.includes(key as CharacterKey)
-}
 
 export const allLocationCharacterKeys = [
   ...nonTravelerCharacterKeys,

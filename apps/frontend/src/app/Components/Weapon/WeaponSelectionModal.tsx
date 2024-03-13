@@ -59,9 +59,10 @@ export default function WeaponSelectionModal({
     [database]
   )
 
-  useEffect(() => {
-    weaponTypeFilter && setWeaponfilter([weaponTypeFilter])
-  }, [weaponTypeFilter])
+  useEffect(
+    () => weaponTypeFilter && setWeaponfilter([weaponTypeFilter]),
+    [weaponTypeFilter]
+  )
 
   const [searchTerm, setSearchTerm] = useState('')
   const deferredSearchTerm = useDeferredValue(searchTerm)

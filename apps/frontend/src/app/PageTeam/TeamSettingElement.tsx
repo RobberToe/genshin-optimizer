@@ -30,7 +30,7 @@ import CharIconSide from '../Components/Image/CharIconSide'
 
 export default function TeamSettingElement({ teamId }: { teamId: string }) {
   const database = useDatabase()
-  const team = database.teams.get(teamId)!
+  const team = database.teams.get(teamId)
   const noChars = team.teamCharIds.every((id) => !id)
   // open the settings modal by default
   const [open, setOpen] = useState(noChars ? true : false)
@@ -42,9 +42,7 @@ export default function TeamSettingElement({ teamId }: { teamId: string }) {
 
   // trigger on teamId change, to use the new team's name/desc
   useEffect(() => {
-    const newTeam = database.teams.get(teamId)
-    if (!newTeam) return
-    const { name, description } = newTeam
+    const { name, description } = database.teams.get(teamId)
     setName(name)
     setDesc(description)
   }, [database, teamId])
@@ -117,7 +115,7 @@ export default function TeamSettingElement({ teamId }: { teamId: string }) {
 }
 function TeamCharacterSelector({ teamId }: { teamId: string }) {
   const database = useDatabase()
-  const team = database.teams.get(teamId)!
+  const team = database.teams.get(teamId)
   const { teamCharIds } = team
   const [charSelectIndex, setCharSelectIndex] = useState(
     undefined as number | undefined
@@ -126,7 +124,7 @@ function TeamCharacterSelector({ teamId }: { teamId: string }) {
     if (charSelectIndex === undefined) return
 
     const existingIndex = teamCharIds.findIndex(
-      (teamCharId) => database.teamChars.get(teamCharId)?.key === cKey
+      (teamCharId) => database.teamChars.get(teamCharId).key === cKey
     )
     if (existingIndex < 0) {
       if (teamCharIds[charSelectIndex]) {
@@ -167,12 +165,12 @@ function TeamCharacterSelector({ teamId }: { teamId: string }) {
       return
     const oldId = teamCharIds[index]
     database.teams.set(teamId, (team) => {
-      delete team.teamCharIds[index]
+      team.teamCharIds[index] = undefined
     })
     database.teamChars.remove(oldId)
   }
   const charKeyAtIndex = database.teamChars.get(
-    teamCharIds[charSelectIndex as number]
+    teamCharIds[charSelectIndex]
   )?.key
   return (
     <>
@@ -218,7 +216,7 @@ function CharSelButton({
   onClose: () => void
 }) {
   const database = useDatabase()
-  const { key: characterKey } = database.teamChars.get(teamCharId)!
+  const { key: characterKey } = database.teamChars.get(teamCharId)
   const { gender } = useDBMeta()
   return (
     <ButtonGroup fullWidth sx={{ height: '100%', alignItems: 'stretch' }}>

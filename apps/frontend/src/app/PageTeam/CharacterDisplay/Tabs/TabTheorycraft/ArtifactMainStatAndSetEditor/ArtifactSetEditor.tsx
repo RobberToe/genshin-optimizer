@@ -48,7 +48,7 @@ export function ArtifactSetEditor({
 
   /* Assumes that all conditionals are from 4-Set. needs to change if there are 2-Set conditionals */
   const set4CondNums = useMemo(() => {
-    if (!value || value < 4) return []
+    if (value < 4) return []
     return Object.keys(artifactSheet.setEffects).filter((setNumKey) =>
       artifactSheet.setEffects[setNumKey]?.document.some(
         (doc) => 'states' in doc
@@ -77,9 +77,7 @@ export function ArtifactSetEditor({
               .map((setKey) => (
                 <MenuItem
                   key={setKey}
-                  disabled={
-                    value === setKey || setKey > remaining + (value ?? 0)
-                  }
+                  disabled={value === setKey || setKey > remaining + value}
                   onClick={() => setValue(setKey as 1 | 2 | 4)}
                 >
                   {setKey}-set

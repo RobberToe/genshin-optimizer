@@ -40,10 +40,10 @@ const dmg = equal(
     )
   )
 )
-const critRate_arr = data_gen.refinementBonus.critRate_
-if (!critRate_arr)
-  throw new Error(`data_gen.refinementBonus.critRate_ for ${key} was undefined`)
-const critRate_ = subscript(input.weapon.refinement, critRate_arr)
+const critRate_ = subscript(
+  input.weapon.refinement,
+  data_gen.refinementBonus['critRate_']
+)
 
 const data = dataObjForWeaponSheet(
   key,

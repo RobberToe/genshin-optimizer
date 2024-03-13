@@ -66,9 +66,7 @@ export function optimizeTcGetNodes(
   ) as NumNode | undefined
   if (!unoptimizedOptimizationTargetNode) return {}
 
-  const constraints = Object.keys(minTotal)
-    .map((k) => workerData.total![k])
-    .filter((n) => n) as NumNode[]
+  const constraints = Object.keys(minTotal).map((k) => workerData.total[k])
 
   let nodes = optimize(
     [unoptimizedOptimizationTargetNode, ...constraints],

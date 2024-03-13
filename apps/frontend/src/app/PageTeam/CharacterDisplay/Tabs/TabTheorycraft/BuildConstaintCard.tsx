@@ -85,7 +85,7 @@ function Selector({
   disabled: boolean
 }) {
   const { setBuildTc } = useContext(BuildTcContext)
-  const unitStr = statKey ? unit(statKey) : ' '
+  const unitStr = unit(statKey) || ' '
   return (
     <ButtonGroup size="small">
       <CustomNumberInputButtonGroupWrapper sx={{ flexBasis: 30, flexGrow: 1 }}>
@@ -105,19 +105,17 @@ function Selector({
           }
           startAdornment={
             <Box component="span" sx={{ whiteSpace: 'nowrap' }}>
-              {statKey && (
-                <StatIcon
-                  statKey={statKey}
-                  iconProps={{
-                    fontSize: 'inherit',
-                    sx: {
-                      verticalAlign: '-10%',
-                      mr: 1,
-                    },
-                  }}
-                />
-              )}
-              {statKey && <ArtifactStatWithUnit statKey={statKey} />}
+              <StatIcon
+                statKey={statKey}
+                iconProps={{
+                  fontSize: 'inherit',
+                  sx: {
+                    verticalAlign: '-10%',
+                    mr: 1,
+                  },
+                }}
+              />
+              <ArtifactStatWithUnit statKey={statKey} />
             </Box>
           }
           disabled={!statKey || disabled}

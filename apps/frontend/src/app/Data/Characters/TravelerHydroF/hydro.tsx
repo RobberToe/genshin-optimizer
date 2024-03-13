@@ -1,10 +1,10 @@
 import { objKeyMap } from '@genshin-optimizer/common/util'
 import type { CharacterKey, ElementKey } from '@genshin-optimizer/gi/consts'
+import { KeyMap } from '@genshin-optimizer/gi/keymap'
 import { allStats } from '@genshin-optimizer/gi/stats'
 import { input } from '../../../Formula'
 import type { DisplaySub } from '../../../Formula/type'
 import {
-  constant,
   equal,
   greaterEq,
   infoMut,
@@ -15,7 +15,6 @@ import {
   prod,
   subscript,
 } from '../../../Formula/utils'
-import KeyMap from '../../../KeyMap'
 import type { CharacterSheetKey } from '../../../Types/consts'
 import { cond, st, stg, trans } from '../../SheetUtil'
 import type { TalentSheet } from '../ICharacterSheet'
@@ -311,10 +310,9 @@ export default function dendro(
       ct.headerTem('constellation2', {
         fields: [
           {
-            node: constant(
-              dm.constellation2.movementSpdDec * -100,
-              KeyMap.info('moveSPD_')
-            ),
+            text: KeyMap.getStr('moveSPD_'),
+            value: dm.constellation2.movementSpdDec * -100,
+            unit: '%',
           },
           {
             text: st('durationInc'),
